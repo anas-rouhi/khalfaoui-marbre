@@ -11,6 +11,14 @@
 |
 */
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+define('LARAVEL_START', microtime(true));
+
 $storage = '/tmp/storage';
 $bootstrapCache = '/tmp/bootstrap/cache';
 
@@ -87,7 +95,7 @@ ini_set('log_errors', '1');
 ini_set('error_log', 'php://stderr');
 error_reporting(E_ALL);
 
-set_exception_handler(static function (Throwable $e) use ($stderr): void {
+$report = static function (Throwable $e) use ($stderr): void {
     $stderr(sprintf(
         '%s: %s in %s:%d%s%s',
         get_class($e),
@@ -97,6 +105,10 @@ set_exception_handler(static function (Throwable $e) use ($stderr): void {
         PHP_EOL,
         $e->getTraceAsString()
     ));
+};
+
+set_exception_handler(static function (Throwable $e) use ($report): void {
+    $report($e);
 
     http_response_code(500);
 });
@@ -114,4 +126,61 @@ register_shutdown_function(static function () use ($stderr): void {
     }
 });
 
-require __DIR__.'/../public/index.php';
+/*
+|--------------------------------------------------------------------------
+| Amorçage de Laravel
+|--------------------------------------------------------------------------
+|
+| public/index.php n'est pas réutilisé ici : on a besoin de l'instance pour
+| brancher le repli « base injoignable » avant de traiter la requête.
+|
+*/
+
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+/*
+|--------------------------------------------------------------------------
+| Repli « base de données injoignable »
+|--------------------------------------------------------------------------
+|
+| Une PDOException levée dans un contrôleur ne remonte jamais jusqu'ici : le
+| handler de Laravel l'intercepte et rend une page 500. On s'y greffe donc
+| directement. La vitrine est d'abord une plaquette commerciale ; faute de
+| base, elle se rend avec des collections vides (les composants Vue basculent
+| alors sur leur jeu de démonstration) plutôt que de renvoyer un 500.
+|
+| Les écritures (formulaire de devis) et le back-office ne sont pas concernés :
+| un enregistrement perdu en silence serait pire qu'une erreur franche.
+|
+*/
+
+$app->make(ExceptionHandler::class)->renderable(
+    static function (Throwable $e, Request $request) use ($report) {
+        if (! $e instanceof PDOException && ! $e instanceof QueryException) {
+            return null;
+        }
+
+        $report($e);
+
+        if (! $request->isMethodSafe() || $request->is('admin', 'admin/*') || $request->expectsJson()) {
+            return null;
+        }
+
+        return Inertia::render('Home', [
+            'products' => [],
+            'projects' => [],
+            'categories' => [],
+            'installationRates' => [],
+        ])->toResponse($request);
+    }
+);
+
+$app->handleRequest(Request::capture());
