@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        /* Compense la navbar fixe lors des ancres #catalogue, #contact... */
+        scroll-padding-top: 7rem;
+    }
+
+    body {
+        @apply bg-obsidian-950 text-obsidian-100;
+    }
+
+    ::selection {
+        @apply bg-brand-500/40 text-white;
+    }
+
+    /*
+     * Listes déroulantes natives.
+     *
+     * Le menu ouvert d'un <select> est peint par le système (fond blanc sous
+     * Windows) alors que la couleur du texte est héritée du champ — ici blanche.
+     * Les options apparaissaient donc blanches sur blanc, lisibles uniquement
+     * au survol. On impose explicitement les deux couleurs sur chaque état,
+     * et `color-scheme` demande au navigateur de peindre le menu en sombre.
+     */
+    select {
+        color-scheme: dark;
+    }
+
+    select option,
+    select optgroup {
+        background-color: theme('colors.obsidian.900');
+        color: theme('colors.obsidian.50');
+    }
+
+    /* Option survolée ou déjà sélectionnée : contraste renforcé aux couleurs
+       de la marque plutôt que le bleu système. */
+    select option:hover,
+    select option:focus,
+    select option:checked,
+    select option[selected] {
+        background-color: theme('colors.brand.600');
+        color: #ffffff;
+    }
+
+    /* Repli pour les navigateurs qui ignorent les couleurs personnalisées des
+       options (Safari) : le fond système reste clair, on garde donc un texte
+       sombre lisible. */
+    @supports (-webkit-hyphens: none) {
+        select option,
+        select optgroup {
+            background-color: #ffffff;
+            color: theme('colors.obsidian.900');
+        }
+    }
+
+    /* Barre de défilement discrète, assortie au thème sombre. */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-obsidian-950;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-obsidian-700;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-brand-600;
+    }
+}
+
+@layer components {
+    /* Effet verre dépoli utilisé par la navbar et les cartes. */
+    .glass {
+        @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+    }
+
+    .section-label {
+        @apply inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.35em] text-brand-400;
+    }
+
+    .heading-display {
+        @apply font-display text-4xl font-light leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-brand-400 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian-950 active:scale-[0.98];
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:border-white/60 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian-950 active:scale-[0.98];
+    }
+
+    .field {
+        @apply w-full rounded-xl border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-obsidian-400 transition focus:border-brand-400 focus:bg-white/10 focus:ring-1 focus:ring-brand-400;
+    }
+
+    .field-label {
+        @apply mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-obsidian-300;
+    }
+}
+
+@layer utilities {
+    /* Décalages d'apparition en cascade pour les entrées du hero. */
+    .delay-100ms { animation-delay: 100ms; }
+    .delay-200ms { animation-delay: 200ms; }
+    .delay-300ms { animation-delay: 300ms; }
+    .delay-400ms { animation-delay: 400ms; }
+    .delay-500ms { animation-delay: 500ms; }
+    .delay-700ms { animation-delay: 700ms; }
+}
+
+/*
+ * ── Adaptations pour l'arabe (dir="rtl") ──
+ *
+ * La bascule droite-à-gauche est prise en charge nativement par flex et grid ;
+ * seuls les points suivants demandent une correction explicite.
+ */
+
+/* L'écriture arabe est cursive : espacer les lettres brise les ligatures et
+   rend le texte illisible. On neutralise donc tous les `tracking-*`. */
+[dir="rtl"] * {
+    letter-spacing: normal !important;
+}
+
+/* Cormorant Garamond ne comporte aucun glyphe arabe : les titres
+   retomberaient sur une serif système approximative. */
+[dir="rtl"] .font-display,
+[dir="rtl"] .heading-display {
+    font-family: Cairo, Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+/* L'arabe superpose points diacritiques et hampes : les interlignes très
+   serrés des titres latins tronquent les glyphes. */
+[dir="rtl"] .heading-display,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3 {
+    line-height: 1.45;
+}
+
+/* Le curseur de comparaison avant/après reste piloté en coordonnées
+   physiques : sa mécanique de rognage n'a pas de sens miroir. */
+[dir="rtl"] .no-flip {
+    direction: ltr;
+}
+
+/*
+ * Apparition au défilement, pilotée par le composable useReveal().
+ *
+ * Volontairement hors de `@layer utilities` : `is-revealed` n'est ajoutée que
+ * par JavaScript, et Tailwind purge les classes qu'il ne voit dans aucun
+ * fichier analysé — la règle disparaîtrait du build et le contenu resterait
+ * invisible.
+ */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+        opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+}
+
+[data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Respecte le réglage système « réduire les animations ». */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
