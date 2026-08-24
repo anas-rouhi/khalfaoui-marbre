@@ -5,6 +5,12 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
+import { Ziggy } from './ziggy';
+
+// La directive @routes expose `window.Ziggy` avec l'URL réelle de l'environnement ;
+// le fichier généré sert de repli (build sans Blade, SSR, tests).
+const ziggyConfig = globalThis.Ziggy ?? Ziggy;
+
 const appName = import.meta.env.VITE_APP_NAME || 'KHALFAOUI MARBRE S.A.R.L';
 
 createInertiaApp({
@@ -17,7 +23,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue)
+            .use(ZiggyVue, ziggyConfig)
             .mount(el);
     },
     progress: {

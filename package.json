@@ -3,8 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "ziggy": "node scripts/generate-ziggy.mjs",
+        "build": "node scripts/generate-ziggy.mjs && vite build",
+        "dev": "node scripts/generate-ziggy.mjs && vite"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.0",
