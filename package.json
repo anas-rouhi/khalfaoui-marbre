@@ -21,5 +21,8 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "ziggy-js": "^2.6.4"
     }
 }
