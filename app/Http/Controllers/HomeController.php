@@ -7,14 +7,56 @@ use App\Models\InstallationRate;
 use App\Models\Product;
 use App\Models\Project;
 use App\Support\MediaPath;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class HomeController extends Controller
 {
     public function index(): Response
     {
-        $products = Product::with(['images', 'category'])
+        return Inertia::render('Home', [
+            'products' => $this->safely('products', fn () => $this->products()),
+            'projects' => $this->safely('projects', fn () => $this->projects()),
+            'categories' => $this->safely('categories', fn () => $this->categories()),
+            // Tarifs de main d'œuvre pilotés depuis le back-office.
+            'installationRates' => $this->safely('installationRates', fn () => $this->installationRates()),
+        ]);
+    }
+
+    /**
+     * Exécute une requête catalogue en tolérant une base injoignable.
+     *
+     * La vitrine est d'abord une page de présentation : en environnement
+     * serverless (base absente, credentials manquants, SQLite sur un disque
+     * en lecture seule) elle doit s'afficher amputée de son catalogue plutôt
+     * que de renvoyer un 500. L'incident part sur stderr pour rester visible
+     * dans les Runtime Logs.
+     *
+     * @param  callable(): Collection<int, mixed>  $query
+     * @return Collection<int, mixed>
+     */
+    private function safely(string $dataset, callable $query): Collection
+    {
+        try {
+            return $query();
+        } catch (Throwable $e) {
+            Log::error("Chargement de « $dataset » impossible : la vitrine est rendue sans ces données.", [
+                'exception' => $e,
+            ]);
+
+            return collect();
+        }
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function products(): Collection
+    {
+        return Product::with(['images', 'category'])
             ->orderByDesc('featured')
             ->orderBy('name')
             ->get()
@@ -40,8 +82,14 @@ class HomeController extends Controller
                     ->filter()
                     ->values(),
             ]);
+    }
 
-        $projects = Project::with('images')
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function projects(): Collection
+    {
+        return Project::with('images')
             ->orderBy('sort_order')
             ->orderByDesc('year')
             ->get()
@@ -63,23 +111,31 @@ class HomeController extends Controller
                     ->filter(fn (array $image) => filled($image['image']))
                     ->values(),
             ]);
+    }
 
-        return Inertia::render('Home', [
-            'products' => $products,
-            'projects' => $projects,
-            'categories' => Category::orderBy('name')->get()->map(fn (Category $category) => [
-                'id' => $category->id,
-                'name' => $category->translated('name'),
-                'slug' => $category->slug,
-            ]),
-            // Tarifs de main d'œuvre pilotés depuis le back-office.
-            'installationRates' => InstallationRate::active()
-                ->map(fn (InstallationRate $rate) => [
-                    'key' => $rate->application,
-                    'label' => $rate->label,
-                    'ratePerM2' => (float) $rate->rate_per_m2,
-                ]),
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function categories(): Collection
+    {
+        return Category::orderBy('name')->get()->map(fn (Category $category) => [
+            'id' => $category->id,
+            'name' => $category->translated('name'),
+            'slug' => $category->slug,
         ]);
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function installationRates(): Collection
+    {
+        return InstallationRate::active()
+            ->map(fn (InstallationRate $rate) => [
+                'key' => $rate->application,
+                'label' => $rate->label,
+                'ratePerM2' => (float) $rate->rate_per_m2,
+            ]);
     }
 
     private function imageUrl(?string $path): ?string
