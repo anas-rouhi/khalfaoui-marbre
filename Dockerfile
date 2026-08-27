@@ -25,4 +25,4 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 EXPOSE 8000
 
-CMD php artisan storage:link --force && php artisan filament:assets && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+CMD ["sh", "-c", "php artisan storage:link --force && php artisan filament:assets && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
