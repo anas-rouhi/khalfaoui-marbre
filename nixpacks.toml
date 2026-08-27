@@ -1,0 +1,10 @@
+[phases.setup]
+aptPkgs = ["...", "libicu-dev", "libzip-dev"]
+nixPkgs = ["...", "php82Extensions.intl", "php82Extensions.zip"]
+
+[phases.build]
+cmds = [
+    "composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip",
+    "npm install",
+    "npm run build"
+]
