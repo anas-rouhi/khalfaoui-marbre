@@ -1,0 +1,53 @@
+[package]
+name = "khalfaoui-marbre"
+version = "1.0.0"
+description = "KHALFAOUI MARBRE - Laravel + Inertia + Vue.js + Filament"
+
+[dependencies]
+"php/php" = "=8.3.400"
+
+[fs]
+"/app/" = "."
+
+[[command]]
+name = "run"
+module = "php/php:php"
+runner = "wasi"
+main-args = ["-t", "/app/public", "-S", "localhost:8080"]
+
+[command.annotations.wasi]
+workers = 8
+
+[[build]]
+name = "deps"
+command = "composer"
+args = ["install", "--no-dev", "--optimize-autoloader", "--ignore-platform-reqs"]
+
+[[build]]
+name = "frontend"
+command = "sh"
+args = ["-c", "npm install --ignore-scripts && npm run build"]
+
+[[build]]
+name = "setup"
+command = "php"
+args = ["artisan", "storage:link"]
+allow_failure = true
+
+[[build]]
+name = "migrate"
+command = "php"
+args = ["artisan", "migrate", "--force"]
+allow_failure = true
+
+[[build]]
+name = "filament"
+command = "php"
+args = ["artisan", "filament:assets"]
+allow_failure = true
+
+[[build]]
+name = "seed"
+command = "php"
+args = ["artisan", "db:seed", "--force"]
+allow_failure = true
