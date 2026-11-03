@@ -11,6 +11,7 @@ const FALLBACK = {
     legal_name: 'KHALFAOUI MARBRE S.A.R.L',
     tagline: "Travaux de bâtiment tous corps d'état · Vente de toutes sortes de marbre et granit",
     logo: '/images/brand/khalfaoui-marbre-logo.svg',
+    logo_on_light: '/images/brand/khalfaoui-marbre-logo-on-light.svg',
     logo_mark: '/images/brand/khalfaoui-marbre-mark.svg',
     address: 'Route 1033 Lahraouiyine, Casablanca',
     address_short: 'Route 1033 Lahraouiyine — Casablanca',

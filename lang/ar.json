@@ -4,6 +4,12 @@
     "locale.switch": "تغيير اللغة",
     "locale.current": "اللغة الحالية",
 
+    "theme.switch": "تغيير المظهر",
+    "theme.to_light": "التبديل إلى الوضع الفاتح",
+    "theme.to_dark": "التبديل إلى الوضع الداكن",
+    "theme.light": "فاتح",
+    "theme.dark": "داكن",
+
     "nav.home": "الرئيسية",
     "nav.catalogue": "الكتالوج",
     "nav.projects": "أعمالنا",

@@ -43,14 +43,26 @@ const markHeight = computed(
         />
 
         <!-- Signature complète : emblème + KHALFAOUI MARBRE S.A.R.L.
-             Aucun texte n'est ajouté à côté, le lettrage fait partie du logo. -->
-        <img
-            v-if="!markOnly"
-            :src="company.logo"
-            :alt="company.legal_name"
-            class="hidden w-auto object-contain sm:block"
-            :class="lockupHeight"
-            decoding="async"
-        />
+             Aucun texte n'est ajouté à côté, le lettrage fait partie du logo.
+             Lettrage blanc sur fond sombre (mode sombre, zone forcée en
+             sombre ou socle), lettrage foncé sinon : le choix passe par les
+             variantes `dark:` pour suivre le thème sans attendre JavaScript. -->
+        <template v-if="!markOnly">
+            <img
+                :src="company.logo"
+                :alt="company.legal_name"
+                class="hidden w-auto object-contain"
+                :class="[lockupHeight, plinth ? 'sm:block' : 'dark:sm:block']"
+                decoding="async"
+            />
+            <img
+                v-if="!plinth"
+                :src="company.logo_on_light"
+                :alt="company.legal_name"
+                class="hidden w-auto object-contain sm:block dark:sm:hidden"
+                :class="lockupHeight"
+                decoding="async"
+            />
+        </template>
     </span>
 </template>

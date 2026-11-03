@@ -140,16 +140,16 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <section id="realisations" class="relative bg-obsidian-900 py-24 sm:py-32">
+    <section id="realisations" class="relative bg-white py-24 sm:py-32 dark:bg-obsidian-900">
         <div class="mx-auto max-w-7xl px-6">
             <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between" data-reveal>
                 <div class="max-w-2xl">
                     <p class="section-label">
-                        <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                        <span class="section-rule" aria-hidden="true" />
                         {{ t('projects.label') }}
                     </p>
                     <h2 class="heading-display mt-6">{{ t('projects.title') }}</h2>
-                    <p class="mt-5 text-base leading-relaxed text-obsidian-300">
+                    <p class="mt-5 text-base leading-relaxed text-stone-600 dark:text-obsidian-300">
                         {{ t('projects.lead') }}
                     </p>
                 </div>
@@ -164,8 +164,8 @@ onBeforeUnmount(() => {
                         class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                         :class="
                             activeCategory === category.value
-                                ? 'border-brand-400 bg-brand-500 text-white'
-                                : 'border-white/10 bg-white/5 text-obsidian-300 hover:border-white/25 hover:text-white'
+                                ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-500'
+                                : 'chip'
                         "
                         :aria-pressed="activeCategory === category.value"
                         @click="activeCategory = category.value"
@@ -186,7 +186,7 @@ onBeforeUnmount(() => {
                     v-for="(project, index) in filtered"
                     :key="project.id"
                     type="button"
-                    class="group relative overflow-hidden rounded-2xl border border-white/10 bg-obsidian-800 text-start transition-all duration-500 hover:border-brand-500/50 hover:shadow-luxe focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+                    class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-obsidian-800 text-start transition-all duration-500 hover:border-brand-500/50 hover:shadow-stone dark:border-white/10 dark:hover:border-champagne-300/40 dark:hover:shadow-luxe focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
                     :class="tileClass(index)"
                     @click="openLightbox(project)"
                 >
@@ -245,13 +245,13 @@ onBeforeUnmount(() => {
                 <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
                     <div class="max-w-2xl">
                         <p class="section-label">
-                            <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                            <span class="section-rule" aria-hidden="true" />
                             {{ t('compare.label') }}
                         </p>
                         <h3 class="heading-display mt-6 text-3xl sm:text-4xl lg:text-5xl">
                             {{ t('compare.title') }}
                         </h3>
-                        <p class="mt-5 text-base leading-relaxed text-obsidian-300">
+                        <p class="mt-5 text-base leading-relaxed text-stone-600 dark:text-obsidian-300">
                             {{ t('compare.lead') }}
                         </p>
                     </div>
@@ -265,8 +265,8 @@ onBeforeUnmount(() => {
                             class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                             :class="
                                 index === comparedIndex
-                                    ? 'border-brand-400 bg-brand-500 text-white'
-                                    : 'border-white/10 bg-white/5 text-obsidian-300 hover:border-white/25 hover:text-white'
+                                    ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-500'
+                                    : 'chip'
                             "
                             :aria-pressed="index === comparedIndex"
                             @click="comparedIndex = index"
@@ -285,8 +285,8 @@ onBeforeUnmount(() => {
                         :after-caption="compared.title"
                     />
 
-                    <p class="mt-5 text-sm text-obsidian-400">
-                        <span class="text-white">{{ compared.title }}</span>
+                    <p class="mt-5 text-sm text-stone-500 dark:text-obsidian-400">
+                        <span class="text-stone-900 dark:text-white">{{ compared.title }}</span>
                         <span v-if="compared.location"> — {{ compared.location }}</span>
                     </p>
                 </div>
@@ -303,7 +303,7 @@ onBeforeUnmount(() => {
             >
                 <div
                     v-if="lightbox"
-                    class="fixed inset-0 z-[60] grid place-items-center bg-obsidian-950/95 p-4 backdrop-blur-md sm:p-8"
+                    class="fixed inset-0 z-[60] grid place-items-center bg-stone-950/85 p-4 backdrop-blur-md sm:p-8 dark:bg-obsidian-950/95"
                     role="dialog"
                     aria-modal="true"
                     :aria-label="lightbox.title"
@@ -320,7 +320,7 @@ onBeforeUnmount(() => {
                         </svg>
                     </button>
 
-                    <div class="w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-obsidian-900">
+                    <div class="w-full max-w-4xl overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-luxe dark:border-white/10 dark:bg-obsidian-900">
                         <div v-if="currentSlide" class="relative">
                             <img
                                 :src="currentSlide.image"
@@ -379,13 +379,13 @@ onBeforeUnmount(() => {
                         </div>
 
                         <div class="p-6 sm:p-8">
-                            <div class="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.2em] text-brand-400">
+                            <div class="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.2em] text-brand-700 dark:text-brand-400">
                                 <span v-if="lightbox.category">{{ lightbox.category }}</span>
                                 <span v-if="lightbox.location">· {{ lightbox.location }}</span>
                                 <span v-if="lightbox.year">· {{ lightbox.year }}</span>
                             </div>
-                            <h3 class="mt-3 font-display text-2xl font-light text-white sm:text-3xl">{{ lightbox.title }}</h3>
-                            <p v-if="lightbox.description" class="mt-4 leading-relaxed text-obsidian-300">
+                            <h3 class="mt-3 font-display text-2xl font-light text-stone-900 sm:text-3xl dark:text-white">{{ lightbox.title }}</h3>
+                            <p v-if="lightbox.description" class="mt-4 leading-relaxed text-stone-600 dark:text-obsidian-300">
                                 {{ lightbox.description }}
                             </p>
                             <a href="#devis" class="btn-primary mt-7" @click="closeLightbox">

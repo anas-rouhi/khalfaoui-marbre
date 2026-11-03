@@ -145,25 +145,25 @@ const formatPrice = (value) =>
 </script>
 
 <template>
-    <section id="catalogue" class="relative overflow-hidden bg-obsidian-950 py-24 sm:py-32">
-        <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" aria-hidden="true" />
+    <section id="catalogue" class="relative overflow-hidden bg-stone-50 py-24 sm:py-32 dark:bg-obsidian-950">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-600/30 to-transparent dark:via-champagne-300/40" aria-hidden="true" />
 
         <div class="mx-auto max-w-7xl px-6">
             <!-- En-tête de section -->
             <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between" data-reveal>
                 <div class="max-w-2xl">
                     <p class="section-label">
-                        <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                        <span class="section-rule" aria-hidden="true" />
                         {{ t('catalogue.label') }}
                     </p>
                     <h2 class="heading-display mt-6">{{ t('catalogue.title') }}</h2>
-                    <p class="mt-5 text-base leading-relaxed text-obsidian-300">
+                    <p class="mt-5 text-base leading-relaxed text-stone-600 dark:text-obsidian-300">
                         {{ t('catalogue.lead') }}
                     </p>
                 </div>
 
-                <p class="shrink-0 text-sm text-obsidian-400">
-                    <span class="font-display text-4xl font-light text-white">{{ filtered.length }}</span>
+                <p class="shrink-0 text-sm text-stone-500 dark:text-obsidian-400">
+                    <span class="font-display text-4xl font-light text-stone-900 dark:text-white">{{ filtered.length }}</span>
                     <span class="ms-2">{{ filtered.length > 1 ? t('catalogue.count_many') : t('catalogue.count_one') }}</span>
                 </p>
             </div>
@@ -171,7 +171,7 @@ const formatPrice = (value) =>
             <!-- Filtres -->
             <div class="mt-14 space-y-6" data-reveal data-reveal-delay="100">
                 <div v-if="applicationOptions.length" class="flex flex-wrap items-center gap-2.5">
-                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-obsidian-500 sm:inline">{{ t('catalogue.filter_usage') }}</span>
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-500">{{ t('catalogue.filter_usage') }}</span>
                     <button
                         v-for="app in applicationFilters"
                         :key="app.key"
@@ -179,8 +179,8 @@ const formatPrice = (value) =>
                         class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                         :class="
                             activeApplication === app.key
-                                ? 'border-brand-400 bg-brand-500 text-white shadow-brand-glow'
-                                : 'border-white/10 bg-white/5 text-obsidian-300 hover:border-white/25 hover:text-white'
+                                ? 'border-brand-500 bg-brand-600 text-white shadow-brand-glow dark:border-brand-400 dark:bg-brand-500'
+                                : 'chip'
                         "
                         :aria-pressed="activeApplication === app.key"
                         @click="activeApplication = app.key"
@@ -190,7 +190,7 @@ const formatPrice = (value) =>
                 </div>
 
                 <div v-if="colorOptions.length" class="flex flex-wrap items-center gap-2.5">
-                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-obsidian-500 sm:inline">{{ t('catalogue.filter_colour') }}</span>
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-500">{{ t('catalogue.filter_colour') }}</span>
                     <button
                         v-for="color in colorFilters"
                         :key="color.key"
@@ -198,14 +198,14 @@ const formatPrice = (value) =>
                         class="group flex items-center gap-2.5 rounded-full border py-2 ps-2 pe-5 text-sm font-medium transition-all duration-300"
                         :class="
                             activeColor === color.key
-                                ? 'border-brand-400 bg-white/10 text-white'
-                                : 'border-white/10 bg-white/5 text-obsidian-300 hover:border-white/25 hover:text-white'
+                                ? 'border-brand-500 bg-brand-50 text-stone-900 dark:border-brand-400 dark:bg-white/10 dark:text-white'
+                                : 'chip'
                         "
                         :aria-pressed="activeColor === color.key"
                         @click="activeColor = color.key"
                     >
                         <span
-                            class="h-5 w-5 rounded-full ring-1 ring-inset ring-white/25"
+                            class="h-5 w-5 rounded-full ring-1 ring-inset ring-stone-900/15 dark:ring-white/25"
                             :style="{ background: color.swatch }"
                             aria-hidden="true"
                         />
@@ -214,7 +214,7 @@ const formatPrice = (value) =>
                 </div>
 
                 <div v-if="familyOptions.length" class="flex flex-wrap items-center gap-2.5">
-                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-obsidian-500 sm:inline">{{ t('catalogue.filter_family') }}</span>
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-500">{{ t('catalogue.filter_family') }}</span>
                     <button
                         v-for="family in familyFilters"
                         :key="family.key"
@@ -222,8 +222,8 @@ const formatPrice = (value) =>
                         class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                         :class="
                             activeFamily === family.key
-                                ? 'border-brand-400 bg-brand-500/15 text-brand-300'
-                                : 'border-white/10 bg-white/5 text-obsidian-300 hover:border-white/25 hover:text-white'
+                                ? 'border-brand-500 bg-brand-500/10 text-brand-800 dark:border-brand-400 dark:bg-brand-500/15 dark:text-brand-300'
+                                : 'chip'
                         "
                         :aria-pressed="activeFamily === family.key"
                         @click="activeFamily = family.key"
@@ -246,9 +246,9 @@ const formatPrice = (value) =>
                 <article
                     v-for="product in filtered"
                     :key="product.id"
-                    class="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-obsidian-900/60 transition-all duration-500 hover:-translate-y-1.5 hover:border-brand-500/50 hover:shadow-luxe"
+                    class="group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm shadow-stone-900/5 transition-all duration-500 hover:-translate-y-1.5 hover:border-brand-500/40 hover:shadow-stone dark:border-white/10 dark:bg-obsidian-900/60 dark:shadow-none dark:hover:border-champagne-300/40 dark:hover:shadow-luxe"
                 >
-                    <div class="relative aspect-[4/3] overflow-hidden bg-obsidian-800">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-stone-200 dark:bg-obsidian-800">
                         <img
                             v-if="hasImage(product)"
                             :src="product.image"
@@ -262,26 +262,26 @@ const formatPrice = (value) =>
                         />
                         <div
                             v-else
-                            class="grid h-full w-full place-items-center bg-gradient-to-br from-obsidian-700 to-obsidian-900 text-xs uppercase tracking-[0.2em] text-obsidian-500"
+                            class="grid h-full w-full place-items-center bg-gradient-to-br from-stone-200 to-stone-300 text-xs uppercase tracking-[0.2em] text-stone-500 dark:from-obsidian-700 dark:to-obsidian-900 dark:text-obsidian-500"
                         >
                             {{ t('catalogue.photo_soon') }}
                         </div>
 
-                        <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/10 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" aria-hidden="true" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/25 via-transparent to-transparent opacity-80 transition-opacity dark:from-obsidian-950 dark:via-obsidian-950/10 duration-500 group-hover:opacity-95" aria-hidden="true" />
 
                         <span
                             v-if="product.finish"
-                            class="absolute start-4 top-4 rounded-full border border-white/20 bg-obsidian-950/70 px-3 py-1 text-[0.65rem] uppercase tracking-[0.16em] text-obsidian-200 backdrop-blur"
+                            class="absolute start-4 top-4 rounded-full border border-white/60 bg-white/85 px-3 py-1 text-[0.65rem] uppercase tracking-[0.16em] text-stone-800 backdrop-blur dark:border-white/20 dark:bg-obsidian-950/70 dark:text-obsidian-200"
                         >
                             {{ product.finish }}
                         </span>
                     </div>
 
                     <div class="flex flex-1 flex-col p-5">
-                        <h3 class="font-display text-xl font-medium text-white">{{ product.name }}</h3>
-                        <p class="mt-1 text-sm text-brand-400">{{ product.color }}</p>
+                        <h3 class="font-display text-xl font-medium text-stone-900 dark:text-white">{{ product.name }}</h3>
+                        <p class="mt-1 text-sm text-brand-700 dark:text-brand-400">{{ product.color }}</p>
 
-                        <p v-if="product.description" class="mt-3 line-clamp-2 text-sm leading-relaxed text-obsidian-400">
+                        <p v-if="product.description" class="mt-3 line-clamp-2 text-sm leading-relaxed text-stone-600 dark:text-obsidian-400">
                             {{ product.description }}
                         </p>
 
@@ -289,24 +289,28 @@ const formatPrice = (value) =>
                             <li
                                 v-for="app in product.applications ?? []"
                                 :key="app"
-                                class="rounded-md bg-white/5 px-2.5 py-1 text-[0.68rem] tracking-wide text-obsidian-300"
+                                class="rounded-md bg-stone-100 px-2.5 py-1 text-[0.68rem] tracking-wide text-stone-600 dark:bg-white/5 dark:text-obsidian-300"
                             >
                                 {{ applicationLabel(app) }}
                             </li>
                         </ul>
 
-                        <div class="mt-5 flex items-end justify-between gap-3 border-t border-white/5 pt-4">
+                        <div class="mt-5 flex items-end justify-between gap-3 border-t border-stone-100 pt-4 dark:border-white/5">
                             <div>
-                                <p v-if="product.pricePerM2" class="font-display text-lg text-white">
+                                <p v-if="product.pricePerM2" class="font-display text-lg text-stone-900 dark:text-white">
                                     {{ formatPrice(product.pricePerM2) }}
-                                    <span class="text-xs font-sans text-obsidian-400">{{ t('catalogue.per_m2') }}</span>
+                                    <span class="text-xs font-sans text-stone-500 dark:text-obsidian-400">{{ t('catalogue.per_m2') }}</span>
                                 </p>
-                                <p v-else class="text-sm text-obsidian-400">{{ t('catalogue.price_on_request') }}</p>
-                                <p v-if="product.origin" class="mt-0.5 text-[0.68rem] uppercase tracking-[0.14em] text-obsidian-500">
+                                <p v-else class="text-sm text-stone-500 dark:text-obsidian-400">{{ t('catalogue.price_on_request') }}</p>
+                                <p v-if="product.origin" class="mt-0.5 text-[0.68rem] uppercase tracking-[0.14em] text-stone-500 dark:text-obsidian-500">
                                     {{ t('catalogue.origin') }} {{ product.origin }}
                                 </p>
-                                <p v-if="product.reference" class="mt-0.5 text-[0.68rem] tracking-[0.14em] text-obsidian-500">
-                                    {{ t('catalogue.reference') }} <span dir="ltr">{{ product.reference }}</span>
+                                <!-- Badge de référence (KM-xxx), à citer au téléphone. -->
+                                <p
+                                    v-if="product.reference"
+                                    class="mt-2 inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 px-2 py-0.5 text-[0.66rem] tracking-[0.12em] text-stone-600 dark:border-champagne-300/25 dark:bg-champagne-300/5 dark:text-champagne-200"
+                                >
+                                    {{ t('catalogue.reference') }} <span dir="ltr" class="font-semibold">{{ product.reference }}</span>
                                 </p>
                             </div>
 
@@ -315,7 +319,7 @@ const formatPrice = (value) =>
                                     :href="productWhatsappLink(product)"
                                     target="_blank"
                                     rel="noopener"
-                                    class="grid h-9 w-9 place-items-center rounded-full bg-brand-500 text-white transition hover:bg-brand-400 hover:shadow-brand-glow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+                                    class="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white transition hover:bg-brand-500 hover:shadow-brand-glow dark:bg-brand-500 dark:hover:bg-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
                                     :aria-label="`${t('catalogue.whatsapp')} — ${product.name}`"
                                     :title="t('catalogue.whatsapp')"
                                 >
@@ -326,7 +330,7 @@ const formatPrice = (value) =>
 
                                 <button
                                     type="button"
-                                    class="rounded-full border border-brand-500/40 px-4 py-2 text-xs font-semibold text-brand-300 transition hover:bg-brand-500 hover:text-white"
+                                    class="rounded-full border border-brand-600/40 px-4 py-2 text-xs font-semibold text-brand-700 transition hover:bg-brand-600 hover:text-white dark:border-brand-500/40 dark:text-brand-300 dark:hover:bg-brand-500"
                                     @click="emit('request-quote', product)"
                                 >
                                     {{ t('catalogue.quote') }}
@@ -338,8 +342,8 @@ const formatPrice = (value) =>
             </TransitionGroup>
 
             <!-- État vide -->
-            <div v-if="!filtered.length" class="mt-16 rounded-2xl border border-dashed border-white/15 py-20 text-center">
-                <p class="text-obsidian-300">{{ t('catalogue.empty_title') }}</p>
+            <div v-if="!filtered.length" class="mt-16 rounded-2xl border border-dashed border-stone-300 py-20 text-center dark:border-white/15">
+                <p class="text-stone-600 dark:text-obsidian-300">{{ t('catalogue.empty_title') }}</p>
                 <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                     <button type="button" class="btn-ghost" @click="resetFilters">{{ t('catalogue.empty_reset') }}</button>
                     <a
@@ -353,13 +357,13 @@ const formatPrice = (value) =>
                 </div>
             </div>
 
-            <p class="mt-14 text-center text-sm text-obsidian-400" data-reveal>
+            <p class="mt-14 text-center text-sm text-stone-500 dark:text-obsidian-400" data-reveal>
                 {{ t('catalogue.not_found') }}
                 <a
                     :href="whatsappLink(t('whatsapp.not_found'))"
                     target="_blank"
                     rel="noopener"
-                    class="text-brand-400 underline-offset-4 transition hover:underline"
+                    class="text-brand-700 underline-offset-4 transition hover:underline dark:text-brand-400"
                 >
                     {{ t('catalogue.not_found_link') }}
                 </a>.

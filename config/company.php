@@ -25,10 +25,14 @@ return [
     |   utilisée dans l'en-tête, le pied de page et la page de connexion admin.
     | - « logo_mark » : emblème seul, pour les espaces étroits (mobile, favicon).
     |
-    | Les deux fichiers sont dessinés en clair : ils se posent sur un fond
-    | sombre. Sur un fond clair, les composants les placent sur un socle sombre.
+    | - « logo_on_light » : même signature, lettrage foncé, pour le mode clair
+    |   du site public.
+    |
+    | « logo » et « logo_mark » sont dessinés en clair : ils se posent sur un
+    | fond sombre. L'emblème garde son disque sombre, lisible partout.
     */
     'logo' => '/images/brand/khalfaoui-marbre-logo.svg',
+    'logo_on_light' => '/images/brand/khalfaoui-marbre-logo-on-light.svg',
     'logo_mark' => '/images/brand/khalfaoui-marbre-mark.svg',
 
     'address' => 'Route 1033 Lahraouiyine, Casablanca',

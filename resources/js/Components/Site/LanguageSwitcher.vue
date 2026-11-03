@@ -11,7 +11,7 @@ const { t, locale, available, switchLocale } = useI18n();
 
 <template>
     <div
-        class="inline-flex items-center rounded-full border border-white/10 bg-white/5 p-0.5"
+        class="inline-flex items-center rounded-full border border-stone-200 bg-stone-100/80 p-0.5 dark:border-white/10 dark:bg-white/5"
         role="group"
         :aria-label="t('locale.switch')"
     >
@@ -22,8 +22,8 @@ const { t, locale, available, switchLocale } = useI18n();
             class="relative rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
             :class="[
                 item.code === locale
-                    ? 'bg-brand-500 text-white shadow-brand-glow'
-                    : 'text-obsidian-300 hover:text-white',
+                    ? 'bg-brand-600 text-white shadow-brand-glow dark:bg-brand-500'
+                    : 'text-stone-600 hover:text-stone-900 dark:text-obsidian-300 dark:hover:text-white',
                 variant === 'full' ? 'flex-1 py-2.5 text-sm' : '',
             ]"
             :aria-current="item.code === locale ? 'true' : 'false'"
@@ -36,7 +36,7 @@ const { t, locale, available, switchLocale } = useI18n();
             <!-- Séparateur visuel entre les deux options inactives -->
             <span
                 v-if="variant === 'compact' && index === 0 && item.code !== locale && available[1]?.code !== locale"
-                class="absolute inset-y-1.5 -end-px w-px bg-white/15"
+                class="absolute inset-y-1.5 -end-px w-px bg-stone-300 dark:bg-white/15"
                 aria-hidden="true"
             />
         </button>

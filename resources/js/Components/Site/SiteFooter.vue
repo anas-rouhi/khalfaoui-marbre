@@ -27,53 +27,53 @@ const specialities = [
 </script>
 
 <template>
-    <footer class="border-t border-white/10 bg-obsidian-950">
+    <footer class="border-t border-stone-200 bg-stone-100 dark:border-champagne-200/10 dark:bg-obsidian-950">
         <div class="mx-auto max-w-7xl px-6 py-16">
             <div class="grid gap-12 lg:grid-cols-12">
                 <div class="lg:col-span-4">
                     <BrandLogo size="lg" />
                     <!-- La raison sociale figure déjà dans le logo : seule la
                          signature d'activité est répétée ici. -->
-                    <p class="mt-6 max-w-sm text-sm leading-relaxed text-obsidian-400">
+                    <p class="mt-6 max-w-sm text-sm leading-relaxed text-stone-600 dark:text-obsidian-400">
                         {{ company.tagline }}
                     </p>
                 </div>
 
                 <nav class="lg:col-span-2" aria-label="Navigation du pied de page">
-                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-white">{{ t('footer.navigation') }}</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-900 dark:text-champagne-100">{{ t('footer.navigation') }}</h2>
                     <ul class="mt-5 space-y-3 text-sm">
                         <li v-for="link in navLinks" :key="link.href">
-                            <a :href="link.href" class="text-obsidian-400 transition hover:text-brand-400">{{ t(link.key) }}</a>
+                            <a :href="link.href" class="text-stone-600 transition hover:text-brand-700 dark:text-obsidian-400 dark:hover:text-brand-400">{{ t(link.key) }}</a>
                         </li>
                     </ul>
                 </nav>
 
                 <div class="lg:col-span-3">
-                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-white">{{ t('footer.specialities') }}</h2>
-                    <ul class="mt-5 space-y-3 text-sm text-obsidian-400">
+                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-900 dark:text-champagne-100">{{ t('footer.specialities') }}</h2>
+                    <ul class="mt-5 space-y-3 text-sm text-stone-600 dark:text-obsidian-400">
                         <li v-for="speciality in specialities" :key="speciality">{{ t(speciality) }}</li>
                     </ul>
                 </div>
 
                 <div class="lg:col-span-3">
-                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-white">{{ t('footer.contact') }}</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-900 dark:text-champagne-100">{{ t('footer.contact') }}</h2>
                     <ul class="mt-5 space-y-4 text-sm">
                         <li>
-                            <a :href="mapsDirectionsUrl" target="_blank" rel="noopener" class="text-obsidian-400 transition hover:text-brand-400">
+                            <a :href="mapsDirectionsUrl" target="_blank" rel="noopener" class="text-stone-600 transition hover:text-brand-700 dark:text-obsidian-400 dark:hover:text-brand-400">
                                 {{ company.address }}
                             </a>
                         </li>
                         <li>
-                            <a :href="telLink" class="text-obsidian-400 transition hover:text-brand-400"><bdi dir="ltr">{{ company.phone_display }}</bdi></a>
+                            <a :href="telLink" class="text-stone-600 transition hover:text-brand-700 dark:text-obsidian-400 dark:hover:text-brand-400"><bdi dir="ltr">{{ company.phone_display }}</bdi></a>
                         </li>
                         <li>
-                            <a :href="mailLink" class="break-all text-obsidian-400 transition hover:text-brand-400">{{ company.email }}</a>
+                            <a :href="mailLink" class="break-all text-stone-600 transition hover:text-brand-700 dark:text-obsidian-400 dark:hover:text-brand-400">{{ company.email }}</a>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs text-obsidian-500 sm:flex-row sm:items-center sm:justify-between">
+            <div class="mt-14 flex flex-col gap-4 border-t border-stone-200 pt-8 text-xs text-stone-500 dark:border-white/10 dark:text-obsidian-500 sm:flex-row sm:items-center sm:justify-between">
                 <p>© {{ year }} {{ company.legal_name }}. {{ t('footer.rights') }}</p>
                 <p>{{ t('footer.city') }}</p>
             </div>

@@ -89,7 +89,7 @@ onBeforeUnmount(() => (dragging.value = false));
 <template>
     <div
         ref="container"
-        class="group relative aspect-[16/10] w-full touch-pan-y select-none overflow-hidden rounded-2xl border border-white/10 bg-obsidian-900"
+        class="group relative aspect-[16/10] w-full touch-pan-y select-none overflow-hidden rounded-2xl border border-stone-200 bg-stone-200 shadow-stone dark:border-white/10 dark:bg-obsidian-900 dark:shadow-none"
         :class="dragging ? 'cursor-grabbing' : 'cursor-grab'"
         @pointerdown.prevent="onPointerDown"
         @pointermove="onPointerMove"
@@ -123,7 +123,7 @@ onBeforeUnmount(() => (dragging.value = false));
 
         <!-- Étiquettes -->
         <span
-            class="pointer-events-none absolute left-4 top-4 rounded-full border border-white/20 bg-obsidian-950/75 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-obsidian-200 backdrop-blur transition-opacity duration-300"
+            class="pointer-events-none absolute left-4 top-4 rounded-full border border-white/60 bg-white/85 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-stone-800 backdrop-blur dark:border-white/20 dark:bg-obsidian-950/75 dark:text-obsidian-200 transition-opacity duration-300"
             :class="position < 18 ? 'opacity-0' : 'opacity-100'"
         >
             {{ beforeText }}
@@ -144,7 +144,7 @@ onBeforeUnmount(() => (dragging.value = false));
         <!-- Poignée -->
         <button
             type="button"
-            class="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-obsidian-950/80 text-white shadow-luxe backdrop-blur transition-transform duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian-950"
+            class="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-white/90 text-stone-900 shadow-luxe backdrop-blur dark:border-champagne-100 dark:bg-obsidian-950/80 dark:text-champagne-100 transition-transform duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-obsidian-950"
             :style="{ left: `${position}%` }"
             role="slider"
             :aria-valuenow="Math.round(position)"

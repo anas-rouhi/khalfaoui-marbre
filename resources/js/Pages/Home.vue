@@ -92,7 +92,7 @@ const requestQuote = (product) => {
          (app.blade.php), dans la langue de la page : seul le titre est géré ici. -->
     <Head :title="t('seo.title')" />
 
-    <div ref="root" class="min-h-screen bg-obsidian-950 font-sans text-obsidian-100">
+    <div ref="root" class="min-h-screen bg-stone-50 font-sans text-stone-800 transition-colors duration-300 dark:bg-obsidian-950 dark:text-obsidian-100">
         <SiteHeader />
 
         <main>

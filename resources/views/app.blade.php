@@ -17,6 +17,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#0a0b0d">
 
+        {{-- Thème clair / sombre posé avant tout rendu, sans quoi la page
+             s'afficherait un instant dans le mauvais mode. Choix mémorisé du
+             visiteur d'abord, réglage système ensuite, sombre en dernier
+             recours. La suite est gérée par resources/js/Composables/useTheme.js. --}}
+        <script>
+            (function () {
+                var stored = null;
+                try { stored = localStorage.getItem('km-theme'); } catch (e) {}
+                var dark = stored === 'dark' || stored === 'light'
+                    ? stored === 'dark'
+                    : !window.matchMedia || !window.matchMedia('(prefers-color-scheme: light)').matches;
+                var root = document.documentElement;
+                root.classList.toggle('dark', dark);
+                root.style.colorScheme = dark ? 'dark' : 'light';
+                if (!dark) {
+                    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fafaf9');
+                }
+            })();
+        </script>
+
         <title inertia>{{ $title }}</title>
 
         <meta name="description" content="{{ $description }}">
@@ -69,7 +89,7 @@
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
-    <body class="bg-obsidian-950 antialiased {{ $isRtl ? 'font-arabic' : 'font-sans' }}">
+    <body class="bg-stone-50 antialiased dark:bg-obsidian-950 {{ $isRtl ? 'font-arabic' : 'font-sans' }}">
         @inertia
     </body>
 </html>

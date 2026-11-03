@@ -3,6 +3,11 @@ import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    // Thème piloté par la classe `dark` posée sur <html> (voir useTheme et
+    // le script anti-flash de app.blade.php) plutôt que par le seul réglage
+    // système : le visiteur peut ainsi imposer l'un ou l'autre mode.
+    darkMode: 'class',
+
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -50,10 +55,28 @@ export default {
                     900: '#141519',
                     950: '#0a0b0d',
                 },
+                // Or champagne : filets, reflets et accents discrets du mode
+                // sombre, en écho aux veines dorées du Calacatta.
+                champagne: {
+                    50: '#fbf8f1',
+                    100: '#f5eedc',
+                    200: '#eadbb6',
+                    300: '#dcc48b',
+                    400: '#cfae6a',
+                    500: '#bf9650',
+                    600: '#a37a3f',
+                    700: '#835f34',
+                    800: '#6b4d2f',
+                    900: '#5a4129',
+                    950: '#332214',
+                },
             },
 
             boxShadow: {
                 luxe: '0 30px 60px -20px rgba(0, 0, 0, 0.55)',
+                // Pendant clair de `luxe` : une ombre chaude et diffuse, comme
+                // une dalle posée sur un plan de pierre.
+                stone: '0 24px 48px -24px rgba(68, 64, 60, 0.28)',
                 'brand-glow': '0 0 0 1px rgba(30, 157, 107, 0.35), 0 18px 40px -18px rgba(30, 157, 107, 0.55)',
             },
 

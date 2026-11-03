@@ -14,35 +14,35 @@ const services = [
 </script>
 
 <template>
-    <section class="relative border-y border-white/5 bg-obsidian-900 py-24 sm:py-28">
+    <section class="relative border-y border-stone-200 bg-white py-24 sm:py-28 dark:border-white/5 dark:bg-obsidian-900">
         <div class="mx-auto max-w-7xl px-6">
             <div class="max-w-2xl" data-reveal>
                 <p class="section-label">
-                    <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                    <span class="section-rule" aria-hidden="true" />
                     {{ t('services.label') }}
                 </p>
                 <h2 class="heading-display mt-6">{{ t('services.title') }}</h2>
-                <p class="mt-5 text-base leading-relaxed text-obsidian-300">
+                <p class="mt-5 text-base leading-relaxed text-stone-600 dark:text-obsidian-300">
                     {{ t('services.lead') }}
                 </p>
             </div>
 
-            <div class="mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-14 grid gap-px overflow-hidden rounded-3xl border border-stone-200 bg-stone-200 sm:grid-cols-2 dark:border-white/10 dark:bg-white/10 lg:grid-cols-3">
                 <article
                     v-for="(service, index) in services"
                     :key="service.key"
-                    class="group bg-obsidian-900 p-8 transition-colors duration-500 hover:bg-obsidian-800"
+                    class="group bg-white p-8 transition-colors duration-500 hover:bg-stone-50 dark:bg-obsidian-900 dark:hover:bg-obsidian-800"
                     data-reveal
                     :data-reveal-delay="index * 70"
                 >
-                    <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-500/15 text-brand-400 transition-all duration-500 group-hover:bg-brand-500 group-hover:text-white">
+                    <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-500/10 text-brand-700 ring-1 ring-inset ring-brand-600/10 transition-all duration-500 group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-500/15 dark:text-brand-400 dark:ring-champagne-300/10 dark:group-hover:bg-brand-500">
                         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                             <path :d="service.icon" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </span>
 
-                    <h3 class="mt-6 font-display text-xl font-medium text-white">{{ t(`services.${service.key}.title`) }}</h3>
-                    <p class="mt-3 text-sm leading-relaxed text-obsidian-400">{{ t(`services.${service.key}.text`) }}</p>
+                    <h3 class="mt-6 font-display text-xl font-medium text-stone-900 dark:text-white">{{ t(`services.${service.key}.title`) }}</h3>
+                    <p class="mt-3 text-sm leading-relaxed text-stone-600 dark:text-obsidian-400">{{ t(`services.${service.key}.text`) }}</p>
                 </article>
             </div>
         </div>

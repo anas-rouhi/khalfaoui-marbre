@@ -4,6 +4,12 @@
     "locale.switch": "Changer de langue",
     "locale.current": "Langue actuelle",
 
+    "theme.switch": "Changer de thème",
+    "theme.to_light": "Passer en mode clair",
+    "theme.to_dark": "Passer en mode sombre",
+    "theme.light": "Clair",
+    "theme.dark": "Sombre",
+
     "nav.home": "Accueil",
     "nav.catalogue": "Catalogue",
     "nav.projects": "Réalisations",

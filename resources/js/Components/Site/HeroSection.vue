@@ -23,10 +23,13 @@ const stats = [
 </script>
 
 <template>
-    <section id="accueil" class="relative min-h-[100svh] overflow-hidden bg-obsidian-950">
+    <!-- Une seule photo pour les deux thèmes : la cuisine en marbre blanc se
+         prête aussi bien à un voile ivoire lumineux (mode clair) qu'à un voile
+         obsidienne (mode sombre), sans second téléchargement. -->
+    <section id="accueil" class="relative min-h-[100svh] overflow-hidden bg-stone-50 dark:bg-obsidian-950">
         <!-- Couche image : légèrement surdimensionnée pour que le panoramique
              lent ne laisse jamais apparaître de bord. -->
-        <div class="absolute inset-0 bg-gradient-to-br from-obsidian-800 via-obsidian-950 to-black">
+        <div class="absolute inset-0 bg-gradient-to-br from-stone-100 via-stone-50 to-white dark:from-obsidian-800 dark:via-obsidian-950 dark:to-black">
             <img
                 v-show="!imageFailed"
                 :src="image"
@@ -41,29 +44,47 @@ const stats = [
         </div>
 
         <!-- Superpositions : dégradé vertical pour ancrer le texte, voile
-             latéral pour le contraste, et teinte verte discrète de la marque. -->
-        <!-- Voiles dosés pour garder le texte lisible à gauche sans effacer la
-             photo : le côté droit reste largement dégagé sur la matière. -->
-        <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/55 to-obsidian-950/20" aria-hidden="true" />
-        <div class="absolute inset-0 bg-gradient-to-r from-obsidian-950/95 via-obsidian-950/45 to-transparent" aria-hidden="true" />
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_60%,rgba(30,157,107,0.16),transparent_58%)]" aria-hidden="true" />
-        <div class="pointer-events-none absolute inset-0 shadow-[inset_0_0_140px_40px_rgba(0,0,0,0.55)]" aria-hidden="true" />
+             latéral pour le contraste, et halo discret. Voiles dosés pour
+             garder le texte lisible à gauche sans effacer la photo : le côté
+             droit reste largement dégagé sur la matière.
+
+             Un jeu de voiles par thème, empilés : seule leur opacité change à
+             la bascule, ce qui donne un fondu doux (un dégradé, lui, ne se
+             transitionne pas). -->
+
+        <!-- Mode clair : ivoire lumineux et reflet champagne, façon Calacatta. -->
+        <div class="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-700 dark:opacity-0" aria-hidden="true">
+            <!-- Sur mobile le texte couvre toute la largeur : voile uniforme
+                 supplémentaire sous les éléments sombres de la photo. -->
+            <div class="absolute inset-0 bg-white/45 sm:bg-white/0" />
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-50 via-stone-50/15 to-white/35" />
+            <div class="absolute inset-0 bg-gradient-to-r from-stone-50/95 via-white/70 to-transparent" />
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_55%,rgba(207,174,106,0.16),transparent_60%)]" />
+        </div>
+
+        <!-- Mode sombre : Nero / obsidienne, teinte verte de la marque. -->
+        <div class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 dark:opacity-100" aria-hidden="true">
+            <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/55 to-obsidian-950/20" />
+            <div class="absolute inset-0 bg-gradient-to-r from-obsidian-950/95 via-obsidian-950/45 to-transparent" />
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_60%,rgba(30,157,107,0.16),transparent_58%)]" />
+            <div class="absolute inset-0 shadow-[inset_0_0_140px_40px_rgba(0,0,0,0.55)]" />
+        </div>
 
         <div class="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-6 pb-24 pt-40 sm:pt-44">
             <div class="max-w-3xl">
-                <p class="section-label animate-fade-up delay-100ms">
-                    <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                <p class="section-label animate-fade-up text-champagne-700 delay-100ms dark:text-brand-400">
+                    <span class="h-px w-10 bg-gradient-to-r from-champagne-700 to-champagne-400 dark:from-champagne-300/80 dark:to-brand-500" aria-hidden="true" />
                     {{ company.legal_name }}
                 </p>
 
-                <h1 class="mt-7 animate-fade-up font-display text-5xl font-light leading-[1.05] tracking-tight text-white delay-200ms sm:text-6xl lg:text-7xl">
+                <h1 class="mt-7 animate-fade-up font-display text-5xl font-light leading-[1.05] tracking-tight text-stone-900 delay-200ms sm:text-6xl lg:text-7xl dark:text-white">
                     {{ t('hero.title_1') }}
-                    <span class="block bg-gradient-to-r from-brand-300 via-brand-400 to-brand-600 bg-clip-text text-transparent">
+                    <span class="block bg-gradient-to-r from-champagne-800 via-champagne-600 to-brand-700 bg-clip-text text-transparent dark:from-brand-300 dark:via-brand-400 dark:to-brand-600">
                         {{ t('hero.title_2') }}
                     </span>
                 </h1>
 
-                <p class="mt-8 max-w-xl animate-fade-up text-base leading-relaxed text-obsidian-200 delay-300ms sm:text-lg">
+                <p class="mt-8 max-w-xl animate-fade-up text-base leading-relaxed text-stone-700 delay-300ms sm:text-lg dark:text-obsidian-200">
                     {{ t('hero.lead') }}
                 </p>
 
@@ -75,18 +96,18 @@ const stats = [
                         </svg>
                     </a>
 
-                    <a href="#catalogue" class="btn-ghost px-9 py-4 text-base">
+                    <a href="#catalogue" class="btn-ghost bg-white/60 px-9 py-4 text-base backdrop-blur-sm dark:bg-transparent">
                         {{ t('hero.cta_collection') }}
                     </a>
                 </div>
 
                 <!-- Chiffres clés -->
-                <dl class="mt-16 grid max-w-lg animate-fade-up grid-cols-3 gap-6 border-t border-white/10 pt-8 delay-500ms">
+                <dl class="mt-16 grid max-w-lg animate-fade-up grid-cols-3 gap-6 border-t border-champagne-600/25 pt-8 delay-500ms dark:border-champagne-200/15">
                     <div v-for="stat in stats" :key="stat.label">
                         <dt class="sr-only">{{ t(stat.key) }}</dt>
                         <dd>
-                            <span class="block font-display text-3xl font-light text-brand-400 sm:text-4xl"><bdi dir="ltr">{{ stat.value }}</bdi></span>
-                            <span class="mt-1.5 block text-[0.7rem] uppercase tracking-[0.18em] text-obsidian-400">{{ t(stat.key) }}</span>
+                            <span class="block font-display text-3xl font-light text-champagne-700 sm:text-4xl dark:text-brand-400"><bdi dir="ltr">{{ stat.value }}</bdi></span>
+                            <span class="mt-1.5 block text-[0.7rem] uppercase tracking-[0.18em] text-stone-600 dark:text-obsidian-400">{{ t(stat.key) }}</span>
                         </dd>
                     </div>
                 </dl>
@@ -96,7 +117,7 @@ const stats = [
         <!-- Repère de défilement -->
         <a
             href="#catalogue"
-            class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 animate-fade-in flex-col items-center gap-2 text-obsidian-400 transition hover:text-brand-400 delay-700ms md:flex"
+            class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 animate-fade-in flex-col items-center gap-2 text-stone-500 transition hover:text-brand-700 delay-700ms md:flex dark:text-obsidian-400 dark:hover:text-brand-400"
             :aria-label="t('hero.scroll_aria')"
         >
             <span class="text-[0.65rem] uppercase tracking-[0.35em]">{{ t('hero.scroll') }}</span>
@@ -110,7 +131,7 @@ const stats = [
             :href="whatsappLink(t('whatsapp.quote'))"
             target="_blank"
             rel="noopener"
-            class="absolute bottom-6 end-6 grid h-14 w-14 place-items-center rounded-full bg-brand-500 text-white shadow-brand-glow transition hover:scale-105 hover:bg-brand-400 sm:hidden"
+            class="absolute bottom-6 end-6 grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-white shadow-brand-glow transition hover:scale-105 hover:bg-brand-500 sm:hidden dark:bg-brand-500 dark:hover:bg-brand-400"
             :aria-label="t('hero.whatsapp_aria')"
         >
             <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

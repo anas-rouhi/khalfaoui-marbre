@@ -7,16 +7,16 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <section id="contact" class="relative bg-obsidian-900 py-24 sm:py-32">
+    <section id="contact" class="relative bg-white py-24 sm:py-32 dark:bg-obsidian-900">
         <div class="mx-auto max-w-7xl px-6">
             <div class="mx-auto max-w-2xl text-center" data-reveal>
                 <p class="section-label justify-center">
-                    <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                    <span class="section-rule" aria-hidden="true" />
                     {{ t('contact.label') }}
-                    <span class="h-px w-10 bg-brand-500" aria-hidden="true" />
+                    <span class="section-rule" aria-hidden="true" />
                 </p>
                 <h2 class="heading-display mt-6">{{ t('contact.title') }}</h2>
-                <p class="mt-5 text-base leading-relaxed text-obsidian-300">
+                <p class="mt-5 text-base leading-relaxed text-stone-600 dark:text-obsidian-300">
                     {{ t('contact.lead') }}
                 </p>
             </div>
@@ -28,58 +28,58 @@ const { t } = useI18n();
                         :href="mapsDirectionsUrl"
                         target="_blank"
                         rel="noopener"
-                        class="group flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 transition-all duration-300 hover:border-brand-500/50 hover:bg-white/10"
+                        class="group flex items-start gap-4 rounded-2xl p-6 surface-card transition-all duration-300 hover:border-brand-500/50 hover:shadow-stone dark:hover:border-champagne-300/30 dark:hover:bg-white/10"
                     >
-                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-500/15 text-brand-400 transition group-hover:bg-brand-500 group-hover:text-white">
+                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-500/10 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-500/15 dark:text-brand-400 dark:group-hover:bg-brand-500">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z" stroke-linecap="round" stroke-linejoin="round" />
                                 <circle cx="12" cy="10" r="3" />
                             </svg>
                         </span>
                         <span class="min-w-0">
-                            <span class="block text-xs uppercase tracking-[0.2em] text-obsidian-400">{{ t('contact.address') }}</span>
-                            <span class="mt-1.5 block font-medium text-white">{{ company.address }}</span>
-                            <span class="mt-1 block text-sm text-brand-400">{{ t('contact.directions') }}</span>
+                            <span class="block text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-obsidian-400">{{ t('contact.address') }}</span>
+                            <span class="mt-1.5 block font-medium text-stone-900 dark:text-white">{{ company.address }}</span>
+                            <span class="mt-1 block text-sm text-brand-700 dark:text-brand-400">{{ t('contact.directions') }}</span>
                         </span>
                     </a>
 
                     <a
                         :href="telLink"
-                        class="group flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 transition-all duration-300 hover:border-brand-500/50 hover:bg-white/10"
+                        class="group flex items-start gap-4 rounded-2xl p-6 surface-card transition-all duration-300 hover:border-brand-500/50 hover:shadow-stone dark:hover:border-champagne-300/30 dark:hover:bg-white/10"
                     >
-                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-500/15 text-brand-400 transition group-hover:bg-brand-500 group-hover:text-white">
+                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-500/10 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-500/15 dark:text-brand-400 dark:group-hover:bg-brand-500">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </span>
                         <span class="min-w-0">
-                            <span class="block text-xs uppercase tracking-[0.2em] text-obsidian-400">{{ t('contact.phone') }}</span>
-                            <span class="mt-1.5 block font-medium text-white"><bdi dir="ltr">{{ company.phone_display }}</bdi></span>
+                            <span class="block text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-obsidian-400">{{ t('contact.phone') }}</span>
+                            <span class="mt-1.5 block font-medium text-stone-900 dark:text-white"><bdi dir="ltr">{{ company.phone_display }}</bdi></span>
                         </span>
                     </a>
 
                     <a
                         :href="mailLink"
-                        class="group flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 transition-all duration-300 hover:border-brand-500/50 hover:bg-white/10"
+                        class="group flex items-start gap-4 rounded-2xl p-6 surface-card transition-all duration-300 hover:border-brand-500/50 hover:shadow-stone dark:hover:border-champagne-300/30 dark:hover:bg-white/10"
                     >
-                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-500/15 text-brand-400 transition group-hover:bg-brand-500 group-hover:text-white">
+                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-500/10 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-500/15 dark:text-brand-400 dark:group-hover:bg-brand-500">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <rect x="2" y="4" width="20" height="16" rx="2" />
                                 <path d="m2 7 10 6 10-6" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </span>
                         <span class="min-w-0">
-                            <span class="block text-xs uppercase tracking-[0.2em] text-obsidian-400">{{ t('contact.email') }}</span>
-                            <span class="mt-1.5 block break-all font-medium text-white">{{ company.email }}</span>
+                            <span class="block text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-obsidian-400">{{ t('contact.email') }}</span>
+                            <span class="mt-1.5 block break-all font-medium text-stone-900 dark:text-white">{{ company.email }}</span>
                         </span>
                     </a>
 
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                        <p class="text-xs uppercase tracking-[0.2em] text-obsidian-400">{{ t('contact.hours') }}</p>
+                    <div class="rounded-2xl p-6 surface-card">
+                        <p class="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-obsidian-400">{{ t('contact.hours') }}</p>
                         <dl class="mt-4 space-y-2.5 text-sm">
                             <div v-for="slot in company.hours" :key="slot.days" class="flex justify-between gap-4">
-                                <dt class="text-obsidian-300">{{ slot.key ? t(slot.key) : slot.days }}</dt>
-                                <dd class="font-medium text-white">{{ slot.value_key ? t(slot.value_key) : slot.time }}</dd>
+                                <dt class="text-stone-600 dark:text-obsidian-300">{{ slot.key ? t(slot.key) : slot.days }}</dt>
+                                <dd class="font-medium text-stone-900 dark:text-white">{{ slot.value_key ? t(slot.value_key) : slot.time }}</dd>
                             </div>
                         </dl>
                     </div>
@@ -98,7 +98,7 @@ const { t } = useI18n();
                 </div>
 
                 <!-- Carte -->
-                <div class="relative min-h-[420px] overflow-hidden rounded-3xl border border-white/10 lg:col-span-3">
+                <div class="relative min-h-[420px] overflow-hidden rounded-3xl border border-stone-200 shadow-stone lg:col-span-3 dark:border-white/10 dark:shadow-none">
                     <iframe
                         :src="mapsEmbedUrl"
                         class="absolute inset-0 h-full w-full"
@@ -111,16 +111,16 @@ const { t } = useI18n();
 
                     <!-- Cartouche d'adresse posé sur la carte -->
                     <div class="pointer-events-none absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
-                        <div class="pointer-events-auto flex flex-col gap-4 rounded-2xl border border-white/15 bg-obsidian-950/85 p-5 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+                        <div class="pointer-events-auto flex flex-col gap-4 rounded-2xl border border-stone-200 bg-white/90 p-5 shadow-stone backdrop-blur-xl dark:border-champagne-200/15 dark:bg-obsidian-950/85 dark:shadow-none sm:flex-row sm:items-center sm:justify-between">
                             <div class="min-w-0">
-                                <p class="font-display text-lg text-white">{{ company.legal_name }}</p>
-                                <p class="mt-1 text-sm text-obsidian-300">{{ company.address }}</p>
+                                <p class="font-display text-lg text-stone-900 dark:text-white">{{ company.legal_name }}</p>
+                                <p class="mt-1 text-sm text-stone-600 dark:text-obsidian-300">{{ company.address }}</p>
                             </div>
                             <a
                                 :href="mapsDirectionsUrl"
                                 target="_blank"
                                 rel="noopener"
-                                class="shrink-0 rounded-full border border-brand-500/50 px-5 py-2.5 text-sm font-semibold text-brand-300 transition hover:bg-brand-500 hover:text-white"
+                                class="shrink-0 rounded-full border border-brand-600/50 px-5 py-2.5 text-sm font-semibold text-brand-700 transition hover:bg-brand-600 hover:text-white dark:border-brand-500/50 dark:text-brand-300 dark:hover:bg-brand-500"
                             >
                                 {{ t('contact.directions_short') }}
                             </a>

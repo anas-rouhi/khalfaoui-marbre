@@ -10,28 +10,39 @@
     }
 
     body {
-        @apply bg-obsidian-950 text-obsidian-100;
+        @apply bg-stone-50 text-stone-800 dark:bg-obsidian-950 dark:text-obsidian-100;
     }
 
     ::selection {
-        @apply bg-brand-500/40 text-white;
+        @apply bg-brand-500/30 text-stone-900 dark:bg-brand-500/40 dark:text-white;
     }
 
     /*
      * Listes déroulantes natives.
      *
      * Le menu ouvert d'un <select> est peint par le système (fond blanc sous
-     * Windows) alors que la couleur du texte est héritée du champ — ici blanche.
-     * Les options apparaissaient donc blanches sur blanc, lisibles uniquement
-     * au survol. On impose explicitement les deux couleurs sur chaque état,
-     * et `color-scheme` demande au navigateur de peindre le menu en sombre.
+     * Windows) alors que la couleur du texte est héritée du champ — blanche en
+     * mode sombre. Les options apparaissaient donc blanches sur blanc, lisibles
+     * uniquement au survol. On impose explicitement les deux couleurs sur
+     * chaque état, et `color-scheme` demande au navigateur de peindre le menu
+     * dans le mode actif.
      */
     select {
+        color-scheme: light;
+    }
+
+    .dark select {
         color-scheme: dark;
     }
 
     select option,
     select optgroup {
+        background-color: #ffffff;
+        color: theme('colors.stone.900');
+    }
+
+    .dark select option,
+    .dark select optgroup {
         background-color: theme('colors.obsidian.900');
         color: theme('colors.obsidian.50');
     }
@@ -51,55 +62,81 @@
        sombre lisible. */
     @supports (-webkit-hyphens: none) {
         select option,
-        select optgroup {
+        select optgroup,
+        .dark select option,
+        .dark select optgroup {
             background-color: #ffffff;
             color: theme('colors.obsidian.900');
         }
     }
 
-    /* Barre de défilement discrète, assortie au thème sombre. */
+    /* Barre de défilement discrète, assortie au thème actif. */
     ::-webkit-scrollbar {
         width: 10px;
     }
     ::-webkit-scrollbar-track {
-        @apply bg-obsidian-950;
+        @apply bg-stone-100 dark:bg-obsidian-950;
     }
     ::-webkit-scrollbar-thumb {
-        @apply rounded-full bg-obsidian-700;
+        @apply rounded-full bg-stone-300 dark:bg-obsidian-700;
     }
     ::-webkit-scrollbar-thumb:hover {
         @apply bg-brand-600;
     }
 }
 
+/*
+ * Convention des deux thèmes : les classes sans préfixe décrivent le mode
+ * clair (pierre claire, encre dense), les variantes `dark:` le mode sombre.
+ *
+ * Les textes posés directement sur une photo (vignettes de chantier,
+ * légendes du comparateur) gardent un voile sombre dans les deux modes.
+ * Le hero, lui, change de voile avec le thème (ivoire / obsidienne).
+ */
 @layer components {
     /* Effet verre dépoli utilisé par la navbar et les cartes. */
     .glass {
-        @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+        @apply border border-stone-200 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-white/5;
+    }
+
+    /* Carte de contenu : blanc pur sur fond pierre, verre fumé en sombre. */
+    .surface-card {
+        @apply border border-stone-200 bg-white shadow-sm shadow-stone-900/5 dark:border-white/10 dark:bg-white/5 dark:shadow-none;
     }
 
     .section-label {
-        @apply inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.35em] text-brand-400;
+        @apply inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.35em] text-brand-700 dark:text-brand-400;
+    }
+
+    /* Filet qui précède les libellés de section : or champagne en sombre. */
+    .section-rule {
+        @apply h-px w-10 bg-brand-600 dark:bg-gradient-to-r dark:from-champagne-300/80 dark:to-brand-500;
     }
 
     .heading-display {
-        @apply font-display text-4xl font-light leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl;
+        @apply font-display text-4xl font-light leading-[1.1] tracking-tight text-stone-900 sm:text-5xl lg:text-6xl dark:text-white;
     }
 
     .btn-primary {
-        @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-brand-400 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian-950 active:scale-[0.98];
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-brand-500 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 active:scale-[0.98] dark:bg-brand-500 dark:hover:bg-brand-400 dark:focus-visible:ring-offset-obsidian-950;
     }
 
     .btn-ghost {
-        @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:border-white/60 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian-950 active:scale-[0.98];
+        @apply inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 px-7 py-3.5 text-sm font-semibold tracking-wide text-stone-800 transition-all duration-300 hover:border-stone-500 hover:bg-stone-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 active:scale-[0.98] dark:border-white/25 dark:text-white dark:hover:border-white/60 dark:hover:bg-white/10 dark:focus-visible:ring-white/50 dark:focus-visible:ring-offset-obsidian-950;
+    }
+
+    /* Pastille de filtre (catalogue, réalisations, estimateur), état inactif.
+       L'état actif est porté par chaque composant. */
+    .chip {
+        @apply border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900 dark:border-white/10 dark:bg-white/5 dark:text-obsidian-300 dark:hover:border-white/25 dark:hover:text-white;
     }
 
     .field {
-        @apply w-full rounded-xl border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-obsidian-400 transition focus:border-brand-400 focus:bg-white/10 focus:ring-1 focus:ring-brand-400;
+        @apply w-full rounded-xl border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 placeholder-stone-400 transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder-obsidian-400 dark:focus:border-brand-400 dark:focus:bg-white/10 dark:focus:ring-brand-400;
     }
 
     .field-label {
-        @apply mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-obsidian-300;
+        @apply mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-stone-600 dark:text-obsidian-300;
     }
 }
 
@@ -168,6 +205,22 @@
 [data-reveal].is-revealed {
     opacity: 1;
     transform: translateY(0);
+}
+
+/*
+ * Fondu doux lors d'une bascule clair / sombre. La classe n'est posée sur
+ * <html> que le temps de la bascule (useTheme) : en permanence, elle
+ * ralentirait chaque survol du site.
+ */
+@media (prefers-reduced-motion: no-preference) {
+    .theme-transition,
+    .theme-transition *,
+    .theme-transition *::before,
+    .theme-transition *::after {
+        transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity, transform !important;
+        transition-duration: 300ms !important;
+        transition-timing-function: ease-in-out !important;
+    }
 }
 
 /* Respecte le réglage système « réduire les animations ». */
