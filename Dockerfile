@@ -6,7 +6,9 @@ RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm run build
 
-FROM php:8.3-cli
+# نسخة PHP مثبتة على آخر إصدار أمني من فرع 8.3 (8.3.36 : ثغرات RCE حرجة مُصلحة).
+# لا تستعمل الوسم العائم php:8.3-cli : طبقة قديمة في الكاش قد تبقى على نسخة غير مُصلحة.
+FROM php:8.3.36-cli
 
 # 1. تثبيت الحزم وإضافات PHP
 RUN apt-get update && apt-get install -y \

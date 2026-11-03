@@ -7,8 +7,11 @@ providers = ["php", "node"]
 [phases.setup]
 nixPkgs = ["...", "php83Extensions.intl", "php83Extensions.zip", "php83Extensions.pdo_mysql", "php83Extensions.gd", "php83Extensions.calendar"]
 
+# Le patch de php83 dépend de la révision nixpkgs de Nixpacks : on refuse de construire
+# sous 8.3.36 (correctifs RCE critiques d'octobre 2026) plutôt que de déployer une version vulnérable.
 [phases.install]
 cmds = [
+    '''php -r "if (version_compare(PHP_VERSION, '8.3.36', '<')) { fwrite(STDERR, 'PHP '.PHP_VERSION.' non patché : 8.3.36 minimum requis'.PHP_EOL); exit(1); }"''',
     "composer install --no-dev --optimize-autoloader"
 ]
 

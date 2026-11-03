@@ -7,6 +7,24 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Déploiement — version PHP minimale (sécurité)
+
+> **Le serveur de production doit exécuter PHP 8.3.36 au minimum.**
+>
+> PHP 8.3.36 (21–22 octobre 2026) corrige deux vulnérabilités critiques d'exécution de code à distance
+> sans authentification (CVE-2026-109618, CVE-2026-109619) pour lesquelles il n'existe aucune
+> mitigation complète : la mise à jour est la seule protection. Les versions 8.3.31 à 8.3.35 étaient
+> elles aussi des correctifs de sécurité (dont un contournement d'ACL IPv6 dans FPM et un défaut de
+> vérification du nom d'hôte OpenSSL).
+
+- **Docker** : le `Dockerfile` est épinglé sur `php:8.3.36-cli`. Augmenter ce tag à chaque nouvelle
+  version de sécurité de la branche 8.3 (voir [php.net/ChangeLog-8](https://www.php.net/ChangeLog-8.php)).
+- **Nixpacks** : `nixpacks.toml` fait échouer la build si le `php83` fourni par nixpkgs est antérieur
+  à 8.3.36. En cas d'échec, mettre à jour Nixpacks plutôt que retirer la vérification.
+- **Serveur classique / Windows** : installer 8.3.36 ou plus récent ; sous Windows, prendre la build
+  `8.3.36-1` (ou ultérieure), qui inclut Brotli 1.2.1 (CVE-2026-111497).
+- Vérifier sur le serveur : `php -v`.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
