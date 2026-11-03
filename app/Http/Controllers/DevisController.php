@@ -7,9 +7,16 @@ use App\Http\Requests\StoreDevisRequest;
 use App\Models\Devis;
 use App\Models\InstallationRate;
 use App\Models\Product;
+use App\Notifications\NewDevisReceived;
+use App\Support\PdfText;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
+
+use function Illuminate\Support\defer;
 
 class DevisController extends Controller
 {
@@ -18,20 +25,24 @@ class DevisController extends Controller
 
     public function store(StoreDevisRequest $request): RedirectResponse
     {
-        $devis = $this->persist($request->validated());
+        $devis = $this->persist($request->devisData());
 
-        return back()->with('success', "Merci {$devis->client_name}, votre demande de devis a bien été enregistrée. Notre équipe vous rappelle sous 24h.");
+        // La demande est close : une nouvelle demande du même visiteur doit
+        // créer sa propre fiche au lieu d'écraser celle-ci.
+        session()->forget(self::SESSION_KEY);
+
+        return back()->with('success', __('quote.success', ['name' => $devis->client_name]));
     }
 
     /**
-     * Devis estimatif au format PDF.
+     * Devis estimatif au format PDF, dans la langue du visiteur.
      *
      * La demande est enregistrée au passage : télécharger un devis est un
      * signal d'achat au moins aussi fort que d'envoyer le formulaire.
      */
     public function pdf(DevisPdfRequest $request): Response
     {
-        $devis = $this->persist($request->validated())->load('product.images');
+        $devis = $this->persist($request->devisData())->load('product.images');
 
         $product = $devis->product;
         $surface = (float) $devis->surface_m2;
@@ -39,9 +50,20 @@ class DevisController extends Controller
         $materialRate = (float) ($product?->price_per_m2 ?? 0);
         $installationRate = InstallationRate::rateFor($devis->application);
 
+        $locale = app()->getLocale();
+        $rtl = config("localization.supported.$locale.dir") === 'rtl';
+        $productName = $product?->translated('name');
+
+        // Helvetica ne contient aucun glyphe arabe : DejaVu Sans prend le
+        // relais dès qu'un texte arabe doit apparaître, libellés ou saisie.
+        $needsArabicFont = $rtl || collect([
+            $devis->client_name, $devis->location, $devis->message, $productName,
+        ])->contains(fn ($text) => PdfText::hasArabic($text));
+
         $pdf = Pdf::loadView('pdf.devis', [
             'devis' => $devis,
             'product' => $product,
+            'productName' => $productName,
             'surface' => $surface,
             'materialRate' => $materialRate,
             'materialCost' => $materialRate * $surface,
@@ -50,15 +72,22 @@ class DevisController extends Controller
             'total' => $devis->estimated_total !== null
                 ? (float) $devis->estimated_total
                 : ($materialRate + $installationRate) * $surface,
-            'applicationLabel' => InstallationRate::where('application', $devis->application)->value('label')
-                ?? Product::APPLICATIONS[$devis->application] ?? '—',
+            // Libellé administré, dans la langue du visiteur (repli sur le français).
+            'applicationLabel' => InstallationRate::labelFor($devis->application) ?? '—',
             'thumbnail' => $this->thumbnailPath($product),
             // Variante matricielle sur fond sombre : dompdf ne sait pas rendre
             // le texte des SVG, et le lettrage du logo est blanc — il lui faut
             // donc son propre fond, identique à celui du bandeau.
             'logo' => public_path('images/brand/khalfaoui-marbre-logo-pdf.jpg'),
             'company' => config('company'),
-        ])->setPaper('a4');
+            'locale' => $locale,
+            'rtl' => $rtl,
+            'font' => $needsArabicFont ? "'DejaVu Sans', sans-serif" : 'Helvetica, Arial, sans-serif',
+        ])
+            ->setPaper('a4')
+            // Seuls les glyphes utilisés de DejaVu Sans sont embarqués
+            // (quelques dizaines de Ko au lieu de ≈ 700 Ko).
+            ->setOption('isFontSubsettingEnabled', true);
 
         return $pdf->download($devis->reference.'.pdf');
     }
@@ -91,7 +120,31 @@ class DevisController extends Controller
         $devis = Devis::create($data);
         session([self::SESSION_KEY => $devis->id]);
 
+        $this->notifyOwner($devis);
+
         return $devis;
+    }
+
+    /**
+     * Alerte le gérant par e-mail, après l'envoi de la réponse : le visiteur
+     * n'attend pas le serveur SMTP, et une panne d'envoi ne fait pas perdre
+     * la demande, déjà enregistrée.
+     */
+    private function notifyOwner(Devis $devis): void
+    {
+        $recipient = config('company.notification_email');
+
+        if (blank($recipient)) {
+            return;
+        }
+
+        defer(function () use ($devis, $recipient) {
+            try {
+                Notification::route('mail', $recipient)->notify(new NewDevisReceived($devis));
+            } catch (Throwable $e) {
+                Log::error("Alerte e-mail non envoyée pour la demande {$devis->reference}.", ['exception' => $e]);
+            }
+        });
     }
 
     /**
@@ -180,9 +233,6 @@ class DevisController extends Controller
         $resized = imagecreatetruecolor($width, $height);
         imagecopyresampled($resized, $image, 0, 0, 0, 0, $width, $height, imagesx($image), imagesy($image));
         imagejpeg($resized, $target, 82);
-
-        imagedestroy($image);
-        imagedestroy($resized);
 
         return is_file($target) ? $target : null;
     }

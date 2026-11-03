@@ -103,6 +103,9 @@ onBeforeUnmount(() => (dragging.value = false));
             class="pointer-events-none absolute inset-0 h-full w-full object-cover"
             draggable="false"
             loading="lazy"
+            decoding="async"
+            width="1600"
+            height="1200"
         />
 
         <!-- Photo « après » : rognée à la position de la séparation -->
@@ -113,6 +116,9 @@ onBeforeUnmount(() => (dragging.value = false));
             :style="revealStyle"
             draggable="false"
             loading="lazy"
+            decoding="async"
+            width="1600"
+            height="1200"
         />
 
         <!-- Étiquettes -->

@@ -34,9 +34,9 @@ class MarbreSeeder extends Seeder
     private function seedCategories(): array
     {
         $families = [
-            ['name' => 'Marbre', 'slug' => 'marbre'],
-            ['name' => 'Granit', 'slug' => 'granit'],
-            ['name' => 'Travertin & Pierre', 'slug' => 'travertin-pierre'],
+            ['name' => 'Marbre', 'name_ar' => 'رخام', 'slug' => 'marbre', 'sort_order' => 1],
+            ['name' => 'Granit', 'name_ar' => 'غرانيت', 'slug' => 'granit', 'sort_order' => 2],
+            ['name' => 'Travertin & Pierre', 'name_ar' => 'ترافرتين وحجر', 'slug' => 'travertin-pierre', 'sort_order' => 3],
         ];
 
         $ids = [];
@@ -123,7 +123,7 @@ class MarbreSeeder extends Seeder
                 'applications' => ['sol', 'escalier', 'salle-de-bain'],
                 'price_per_m2' => 1180,
                 'featured' => true,
-                'description' => "Le grand classique des sols de réception : un beige crème très homogène, à peine nuancé, qui agrandit les volumes et se marie avec tout. Notre référence la plus posée en grandes surfaces de salon.",
+                'description' => 'Le grand classique des sols de réception : un beige crème très homogène, à peine nuancé, qui agrandit les volumes et se marie avec tout. Notre référence la plus posée en grandes surfaces de salon.',
                 'image' => '/images/catalogue/marbre-crema-marfil.jpg',
             ],
             [
@@ -151,7 +151,7 @@ class MarbreSeeder extends Seeder
                 'applications' => ['sol', 'escalier', 'facade'],
                 'price_per_m2' => 720,
                 'featured' => false,
-                'description' => "Marbre marocain extrait à quelques kilomètres de notre dépôt. Un beige sable chaleureux, très régulier, offrant le meilleur rapport qualité-prix de la gamme pour les grandes surfaces de sol et les escaliers.",
+                'description' => 'Marbre marocain extrait à quelques kilomètres de notre dépôt. Un beige sable chaleureux, très régulier, offrant le meilleur rapport qualité-prix de la gamme pour les grandes surfaces de sol et les escaliers.',
                 'image' => '/images/catalogue/marbre-beige-zenata.jpg',
             ],
             [
@@ -218,7 +218,7 @@ class MarbreSeeder extends Seeder
                 'applications' => ['escalier', 'sol', 'facade'],
                 'price_per_m2' => 690,
                 'featured' => false,
-                'description' => "La référence des escaliers et des circulations intensives. Adouci, il devient antidérapant sans rien perdre de sa finesse, et sa résistance au gel le rend parfait pour les emmarchements extérieurs.",
+                'description' => 'La référence des escaliers et des circulations intensives. Adouci, il devient antidérapant sans rien perdre de sa finesse, et sa résistance au gel le rend parfait pour les emmarchements extérieurs.',
                 'image' => '/images/catalogue/granit-gris-tarn.jpg',
             ],
 
@@ -246,7 +246,7 @@ class MarbreSeeder extends Seeder
                 'applications' => ['salle-de-bain', 'sol', 'facade'],
                 'price_per_m2' => 830,
                 'featured' => false,
-                'description' => "Travertin aux rubans bruns et noisette, coupé dans le fil pour révéler ses strates. Sa surface brossée reste agréable et sûre pieds nus, ce qui en fait un excellent choix de salle de bain et de hammam.",
+                'description' => 'Travertin aux rubans bruns et noisette, coupé dans le fil pour révéler ses strates. Sa surface brossée reste agréable et sûre pieds nus, ce qui en fait un excellent choix de salle de bain et de hammam.',
                 'image' => '/images/catalogue/travertin-noyer.jpg',
             ],
         ];
@@ -270,10 +270,11 @@ class MarbreSeeder extends Seeder
 
     private function seedProjects(): void
     {
+        // `category` : clé d'un type de projet (table project_types).
         $projects = [
             [
                 'title' => 'Villa de luxe à Anfa — Cuisine en Calacatta Gold',
-                'category' => 'Villa',
+                'category' => 'villa',
                 'location' => 'Anfa Supérieur, Casablanca',
                 'year' => 2025,
                 'sort_order' => 1,
@@ -286,7 +287,7 @@ class MarbreSeeder extends Seeder
             ],
             [
                 'title' => 'Appartement de standing Gauthier — Sol en Carrara',
-                'category' => 'Appartement',
+                'category' => 'appartement',
                 'location' => 'Gauthier, Casablanca',
                 'year' => 2025,
                 'sort_order' => 2,
@@ -298,7 +299,7 @@ class MarbreSeeder extends Seeder
             ],
             [
                 'title' => 'Riad contemporain à Marrakech — Travertin & patio',
-                'category' => 'Résidence',
+                'category' => 'residence',
                 'location' => 'Palmeraie, Marrakech',
                 'year' => 2024,
                 'sort_order' => 3,
@@ -310,7 +311,7 @@ class MarbreSeeder extends Seeder
             ],
             [
                 'title' => 'Hôtel boutique Casablanca — Façade en travertin',
-                'category' => 'Hôtel',
+                'category' => 'hotel',
                 'location' => 'Ain Diab, Casablanca',
                 'year' => 2024,
                 'sort_order' => 4,
@@ -323,11 +324,11 @@ class MarbreSeeder extends Seeder
             ],
             [
                 'title' => 'Villa Souissi à Rabat — Escalier & sol en marbre',
-                'category' => 'Villa',
+                'category' => 'villa',
                 'location' => 'Souissi, Rabat',
                 'year' => 2023,
                 'sort_order' => 5,
-                'description' => "Escalier hélicoïdal de 24 marches en marbre Crema Marfil, chaque marche relevée et taillée sur mesure, nez arrondi et contremarches assorties. Sol de réception et paliers posés dans la même teinte.",
+                'description' => 'Escalier hélicoïdal de 24 marches en marbre Crema Marfil, chaque marche relevée et taillée sur mesure, nez arrondi et contremarches assorties. Sol de réception et paliers posés dans la même teinte.',
                 'cover_image' => '/images/realisations/rabat-escalier-marbre.jpg',
                 'gallery' => [
                     ['/images/realisations/rabat-villa-nuit.jpg', 'Façade et emmarchement extérieur de nuit'],
@@ -336,7 +337,7 @@ class MarbreSeeder extends Seeder
             ],
             [
                 'title' => 'Résidence Prestige — Piscine & terrasse en pierre',
-                'category' => 'Résidence',
+                'category' => 'residence',
                 'location' => 'Bouskoura, Casablanca',
                 'year' => 2025,
                 'sort_order' => 6,

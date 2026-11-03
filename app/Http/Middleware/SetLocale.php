@@ -24,12 +24,26 @@ class SetLocale
             return $next($request);
         }
 
+        // `?lang=ar` donne à chaque langue une URL propre, indispensable pour
+        // que les moteurs de recherche (qui n'ont pas de session) indexent la
+        // version arabe. Le choix est mémorisé pour la suite de la visite.
+        $requested = $request->query('lang');
+
+        if ($this->isSupported($requested)) {
+            $request->session()->put('locale', $requested);
+        }
+
         $locale = $request->session()->get('locale');
 
-        if (is_string($locale) && array_key_exists($locale, config('localization.supported'))) {
+        if ($this->isSupported($locale)) {
             App::setLocale($locale);
         }
 
         return $next($request);
+    }
+
+    private function isSupported(mixed $locale): bool
+    {
+        return is_string($locale) && array_key_exists($locale, config('localization.supported'));
     }
 }

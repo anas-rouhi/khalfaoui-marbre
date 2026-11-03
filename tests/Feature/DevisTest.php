@@ -42,7 +42,7 @@ class DevisTest extends TestCase
                 ->where('products.0.name', 'Granit Noir Absolu')
                 // Le round-trip JSON ramène 950.0 à un entier.
                 ->where('products.0.pricePerM2', 950)
-                ->where('products.0.image', '/images/catalogue/granit-noir-absolu.jpg')
+                ->where('products.0.image', '/images/catalogue/granit-noir-absolu.webp')
                 ->where('company.phone_display', config('company.phone_display'))
                 ->where('company.email', config('company.email'))
             );
@@ -74,7 +74,7 @@ class DevisTest extends TestCase
             // Le tri se fait sur sort_order, pas sur l'ordre d'insertion.
             ->where('projects.0.gallery.0.caption', 'Détail du raccord')
             ->where('projects.0.gallery.1.caption', 'Salle de bain principale')
-            ->where('projects.0.gallery.0.image', '/images/realisations/anfa-calacatta-detail.jpg')
+            ->where('projects.0.gallery.0.image', '/images/realisations/anfa-calacatta-detail.webp')
         );
     }
 

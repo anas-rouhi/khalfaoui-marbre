@@ -9,8 +9,8 @@
 | appliquée au corps de page (l'arabe n'est pas couvert par Inter ni par
 | Cormorant Garamond).
 |
-| La langue choisie est mémorisée en session — les URL restent identiques
-| dans les deux langues.
+| La langue choisie est mémorisée en session. Chaque langue dispose aussi
+| d'une URL propre (`/?lang=ar`), déclarée aux moteurs via hreflang.
 |
 */
 

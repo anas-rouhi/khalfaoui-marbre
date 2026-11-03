@@ -13,12 +13,14 @@ class EditInstallationRate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()->label('Supprimer'),
+            Actions\DeleteAction::make()
+                ->label(__('Supprimer'))
+                ->hidden(fn () => InstallationRateResource::productCount($this->record) > 0),
         ];
     }
 
     public function getTitle(): string
     {
-        return 'Tarif — '.$this->record->label;
+        return __('Usage — :name', ['name' => $this->record->label]);
     }
 }

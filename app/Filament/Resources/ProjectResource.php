@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Models\Project;
+use App\Models\ProjectType;
 use App\Support\MediaPath;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProjectResource extends Resource
 {
@@ -17,143 +19,170 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
-    protected static ?string $navigationGroup = 'Catalogue';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Catalogue');
+    }
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $modelLabel = 'réalisation';
+    public static function getModelLabel(): string
+    {
+        return __('réalisation');
+    }
 
-    protected static ?string $pluralModelLabel = 'réalisations';
+    public static function getPluralModelLabel(): string
+    {
+        return __('réalisations');
+    }
 
-    protected static ?string $navigationLabel = 'Réalisations';
+    public static function getNavigationLabel(): string
+    {
+        return __('Réalisations');
+    }
 
     protected static ?string $recordTitleAttribute = 'title';
-
-    /**
-     * Le site public construit ses boutons de filtre à partir de ces valeurs :
-     * une liste fermée évite qu'une faute de frappe crée un filtre parasite.
-     */
-    public const CATEGORIES = [
-        'Villa' => 'Villa',
-        'Appartement' => 'Appartement',
-        'Résidence' => 'Résidence',
-        'Hôtel' => 'Hôtel',
-        'Bureau' => 'Bureau',
-        'Showroom' => 'Showroom',
-    ];
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Le chantier')
+            Forms\Components\Section::make(__('Le chantier'))
                 ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('title')
-                        ->label('Titre')
+                        ->label(__('Titre'))
                         ->required()
                         ->maxLength(190)
                         ->columnSpanFull()
-                        ->placeholder('Villa contemporaine — plan de travail Emerald Pearl'),
+                        ->placeholder(__('Villa contemporaine — plan de travail Emerald Pearl')),
 
                     Forms\Components\TextInput::make('title_ar')
-                        ->label('Titre en arabe')
+                        ->label(__('Titre en arabe'))
                         ->maxLength(190)
                         ->columnSpanFull()
                         ->extraInputAttributes(['dir' => 'rtl'])
-                        ->helperText('Facultatif : le titre français s\'affiche à défaut.'),
+                        ->helperText(__('Facultatif : le titre français s\'affiche à défaut.')),
 
+                    // Liste administrée (Catalogue › Types de projet) plutôt que
+                    // saisie libre : une faute de frappe créerait un filtre
+                    // parasite sur le site.
                     Forms\Components\Select::make('category')
-                        ->label('Type de bien')
-                        ->options(self::CATEGORIES)
+                        ->label(__('Type de projet'))
+                        ->options(fn () => ProjectType::options())
                         ->native(false)
-                        ->helperText('Sert de bouton de filtre sur le site.'),
+                        ->searchable()
+                        // Nouveau type créé sans quitter la réalisation : il
+                        // devient aussitôt un bouton de filtre du site.
+                        ->createOptionForm(ProjectTypeResource::formFields())
+                        ->createOptionUsing(fn (array $data) => ProjectType::create($data)->key)
+                        ->helperText(__('Sert de bouton de filtre sur le site. Bouton « + » pour ajouter un type (Restaurant, Clinique…).')),
 
                     Forms\Components\TextInput::make('location')
-                        ->label('Localisation')
+                        ->label(__('Localisation'))
                         ->maxLength(190)
-                        ->placeholder('Bouskoura, Casablanca'),
+                        ->placeholder(__('Bouskoura, Casablanca')),
 
                     Forms\Components\TextInput::make('year')
-                        ->label('Année')
+                        ->label(__('Année'))
                         ->numeric()
                         ->minValue(1990)
                         ->maxValue((int) date('Y') + 1)
                         ->placeholder(date('Y')),
 
                     Forms\Components\TextInput::make('sort_order')
-                        ->label('Ordre d\'affichage')
+                        ->label(__('Ordre d\'affichage'))
                         ->numeric()
                         ->default(0)
-                        ->helperText('Le plus petit nombre apparaît en premier.'),
+                        ->helperText(__('Le plus petit nombre apparaît en premier.')),
+
+                    Forms\Components\Toggle::make('is_published')
+                        ->label(__('Publiée sur le site'))
+                        ->default(true)
+                        ->helperText(__('Décochée, la réalisation est conservée ici mais masquée du site et de ses filtres.')),
 
                     Forms\Components\Textarea::make('description')
-                        ->label('Description')
+                        ->label(__('Description'))
                         ->rows(3)
                         ->maxLength(1000)
                         ->columnSpanFull()
-                        ->helperText('Affichée quand le visiteur agrandit la photo.'),
+                        ->helperText(__('Affichée quand le visiteur agrandit la photo.')),
 
                     Forms\Components\Textarea::make('description_ar')
-                        ->label('Description en arabe')
+                        ->label(__('Description en arabe'))
                         ->rows(3)
                         ->maxLength(1000)
                         ->columnSpanFull()
                         ->extraInputAttributes(['dir' => 'rtl'])
-                        ->helperText('Facultatif : la description française s\'affiche à défaut.'),
+                        ->helperText(__('Facultatif : la description française s\'affiche à défaut.')),
                 ]),
 
-            Forms\Components\Section::make('Photo de couverture')
-                ->description('Vignette affichée dans le portfolio du site.')
+            Forms\Components\Section::make(__('Photo de couverture'))
+                ->description(__('Vignette affichée dans le portfolio du site.'))
                 ->schema([
                     Forms\Components\FileUpload::make('cover_image')
                         ->label('')
                         ->image()
+                        ->acceptedFileTypes(MediaPath::UPLOAD_MIME_TYPES)
+                        ->imageResizeMode('contain')
+                        ->imageResizeTargetWidth('1920')
+                        ->imageResizeTargetHeight('1920')
+                        ->imageResizeUpscale(false)
                         ->disk('public')
                         ->directory('projects')
                         ->visibility('public')
                         ->imageEditor()
                         ->maxSize(5120)
-                        ->helperText('JPG ou WebP, format paysage (1600 × 1200 px conseillé), 5 Mo maximum.'),
+                        ->helperText(__('JPG, PNG ou WebP, format paysage (1600 × 1200 px conseillé), 5 Mo maximum. Réduite automatiquement à 1920 px.')),
                 ]),
 
-            Forms\Components\Section::make('Photo « avant travaux »')
-                ->description('Facultative. Dès qu\'elle est renseignée, la réalisation apparaît dans le comparateur avant/après du site.')
+            Forms\Components\Section::make(__('Photo « avant travaux »'))
+                ->description(__('Facultative. Dès qu\'elle est renseignée, la réalisation apparaît dans le comparateur avant/après du site.'))
                 ->collapsed(fn (?Project $record) => blank($record?->before_image))
                 ->columns(2)
                 ->schema([
                     Forms\Components\FileUpload::make('before_image')
-                        ->label('Le chantier avant notre intervention')
+                        ->label(__('Le chantier avant notre intervention'))
                         ->image()
+                        ->acceptedFileTypes(MediaPath::UPLOAD_MIME_TYPES)
+                        ->imageResizeMode('contain')
+                        ->imageResizeTargetWidth('1920')
+                        ->imageResizeTargetHeight('1920')
+                        ->imageResizeUpscale(false)
                         ->disk('public')
                         ->directory('projects')
                         ->visibility('public')
                         ->imageEditor()
                         ->maxSize(5120)
-                        ->helperText('Cadrez au même endroit que la photo de couverture : la comparaison n\'en sera que plus parlante.'),
+                        ->helperText(__('Cadrez au même endroit que la photo de couverture : la comparaison n\'en sera que plus parlante.')),
 
                     Forms\Components\TextInput::make('before_caption')
-                        ->label('Légende')
+                        ->label(__('Légende'))
                         ->maxLength(190)
-                        ->placeholder('Cloisons déposées, réseaux apparents.'),
+                        ->placeholder(__('Cloisons déposées, réseaux apparents.')),
                 ]),
 
-            Forms\Components\Section::make('Galerie du chantier')
-                ->description('Vues supplémentaires, feuilletées par le visiteur quand il agrandit la réalisation.')
+            Forms\Components\Section::make(__('Galerie du chantier'))
+                ->description(__('Vues supplémentaires, feuilletées par le visiteur quand il agrandit la réalisation.'))
                 ->collapsed(fn (?Project $record) => $record?->images()->exists() === false)
                 ->schema([
                     Forms\Components\Repeater::make('images')
                         ->label('')
                         ->relationship()
-                        ->addActionLabel('Ajouter une vue')
+                        ->addActionLabel(__('Ajouter une vue'))
                         ->orderColumn('sort_order')
                         ->reorderable()
                         ->collapsible()
                         ->defaultItems(0)
-                        ->itemLabel(fn (array $state): ?string => $state['caption'] ?? 'Vue du chantier')
+                        ->itemLabel(fn (array $state): ?string => $state['caption'] ?? __('Vue du chantier'))
                         ->schema([
                             Forms\Components\FileUpload::make('image_path')
-                                ->label('Fichier')
+                                ->label(__('Fichier'))
                                 ->image()
+                                ->acceptedFileTypes(MediaPath::UPLOAD_MIME_TYPES)
+                                ->imageResizeMode('contain')
+                                ->imageResizeTargetWidth('1920')
+                                ->imageResizeTargetHeight('1920')
+                                ->imageResizeUpscale(false)
                                 ->disk('public')
                                 ->directory('projects')
                                 ->visibility('public')
@@ -162,9 +191,9 @@ class ProjectResource extends Resource
                                 ->required(),
 
                             Forms\Components\TextInput::make('caption')
-                                ->label('Légende')
+                                ->label(__('Légende'))
                                 ->maxLength(190)
-                                ->placeholder("Détail du raccord de veinage à l'angle"),
+                                ->placeholder(__("Détail du raccord de veinage à l'angle")),
                         ]),
                 ]),
         ]);
@@ -175,7 +204,7 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('cover_image')
-                    ->label('Photo')
+                    ->label(__('Photo'))
                     // Gère à la fois les chemins /images/… livrés avec le site
                     // et les fichiers téléversés sur le disque « public ».
                     ->getStateUsing(fn (Project $record) => MediaPath::thumbnail($record->cover_image))
@@ -185,7 +214,7 @@ class ProjectResource extends Resource
                     ->defaultImageUrl(asset(ltrim(config('company.logo_mark'), '/'))),
 
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Titre')
+                    ->label(__('Titre'))
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
@@ -193,25 +222,34 @@ class ProjectResource extends Resource
                     ->description(fn (Project $record) => $record->location),
 
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Type')
+                    ->label(__('Type'))
+                    ->formatStateUsing(fn (Project $record) => $record->projectType?->name ?? $record->category)
                     ->badge()
                     ->color('gray')
                     ->sortable(),
 
+                Tables\Columns\ToggleColumn::make('is_published')
+                    ->label(__('Publiée')),
+
                 Tables\Columns\TextColumn::make('year')
-                    ->label('Année')
+                    ->label(__('Année'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Ordre')
+                    ->label(__('Ordre'))
                     ->sortable(),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->label('Type de bien')
-                    ->options(self::CATEGORIES),
+                    ->label(__('Type de projet'))
+                    ->options(fn () => ProjectType::options()),
+
+                Tables\Filters\TernaryFilter::make('is_published')
+                    ->label(__('Publication'))
+                    ->trueLabel(__('Publiées'))
+                    ->falseLabel(__('Masquées')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -222,8 +260,13 @@ class ProjectResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('Aucune réalisation')
-            ->emptyStateDescription('Ajoutez vos plus beaux chantiers pour alimenter le portfolio du site.');
+            ->emptyStateHeading(__('Aucune réalisation'))
+            ->emptyStateDescription(__('Ajoutez vos plus beaux chantiers pour alimenter le portfolio du site.'));
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with('projectType');
     }
 
     public static function getPages(): array

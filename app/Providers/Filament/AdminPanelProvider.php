@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\SetAdminLocale;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -11,6 +12,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -28,6 +30,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // Lien « Mot de passe oublié ? » sous le formulaire de connexion :
+            // le lien de réinitialisation part par e-mail (MAIL_MAILER réel requis).
+            ->passwordReset()
             // Page « Profil » dans le menu utilisateur : nom, e-mail et mot de
             // passe modifiables sans passer par la console.
             // `isSimple: false` la rend dans la coque du panneau — barre
@@ -48,11 +53,20 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'info' => Color::Blue,
             ])
+            // Libellés évalués à l'affichage (closures) : la configuration du
+            // panneau est lue au démarrage, avant que SetAdminLocale n'ait
+            // appliqué la langue choisie.
             ->navigationGroups([
-                NavigationGroup::make('Catalogue'),
-                NavigationGroup::make('Clients'),
-                NavigationGroup::make('Réglages'),
+                NavigationGroup::make(fn () => __('Catalogue')),
+                NavigationGroup::make(fn () => __('Clients')),
+                NavigationGroup::make(fn () => __('Réglages')),
             ])
+            // Sélecteur FR / العربية : barre supérieure et page de connexion.
+            ->renderHook(PanelsRenderHook::USER_MENU_BEFORE, fn () => view('filament.language-switcher'))
+            ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn () => view('filament.language-switcher', ['centered' => true]))
+            ->renderHook(PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_AFTER, fn () => view('filament.language-switcher', ['centered' => true]))
+            // Inter ne contient pas l'arabe : Cairo, déjà utilisée par le site.
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('filament.arabic-font'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -70,6 +84,12 @@ class AdminPanelProvider extends PanelProvider
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
+            ])
+            // Persistant : réappliqué aux requêtes Livewire du panneau, qui
+            // afficheraient sinon les tableaux et formulaires dans la langue
+            // du site vitrine.
+            ->middleware([SetAdminLocale::class], isPersistent: true)
+            ->middleware([
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])

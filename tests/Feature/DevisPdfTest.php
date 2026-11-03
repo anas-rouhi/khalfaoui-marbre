@@ -144,4 +144,44 @@ class DevisPdfTest extends TestCase
         $response->assertOk();
         $this->assertNull(Devis::first()->estimated_total);
     }
+
+    public function test_un_visiteur_arabophone_recoit_un_devis_en_arabe(): void
+    {
+        $product = $this->product();
+
+        $this->get('/langue/ar');
+
+        $response = $this->post('/devis/pdf', $this->payload([
+            'product_id' => $product->id,
+            'client_name' => 'سناء العمراني',
+        ]));
+
+        $response->assertOk();
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        // Police couvrant l'arabe, embarquée en sous-ensemble.
+        $this->assertStringContainsString('DejaVuSans', $response->getContent());
+    }
+
+    public function test_un_nom_en_arabe_reste_lisible_dans_le_devis_francais(): void
+    {
+        $product = $this->product();
+
+        $response = $this->post('/devis/pdf', $this->payload([
+            'product_id' => $product->id,
+            'client_name' => 'سناء العمراني',
+        ]));
+
+        $response->assertOk();
+        $this->assertStringContainsString('DejaVuSans', $response->getContent());
+    }
+
+    public function test_un_devis_francais_sans_arabe_garde_la_police_legere(): void
+    {
+        $product = $this->product();
+
+        $response = $this->post('/devis/pdf', $this->payload(['product_id' => $product->id]));
+
+        $response->assertOk();
+        $this->assertStringNotContainsString('DejaVuSans', $response->getContent());
+    }
 }

@@ -11,6 +11,6 @@ class CreateInstallationRate extends CreateRecord
 
     public function getTitle(): string
     {
-        return 'Nouveau tarif de pose';
+        return __('Nouvel usage');
     }
 }

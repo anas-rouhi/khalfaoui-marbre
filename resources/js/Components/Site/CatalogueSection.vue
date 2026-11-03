@@ -6,6 +6,21 @@ import { useI18n } from '@/Composables/useI18n';
 const props = defineProps({
     /** Liste déjà résolue par la page (base de données ou données de démo). */
     products: { type: Array, default: () => [] },
+    /**
+     * Teintes administrées (Réglages › Teintes), dans l'ordre du back-office.
+     * Format : [{ key, label, swatch }]
+     */
+    colorFamilies: { type: Array, default: () => [] },
+    /**
+     * Usages administrés (Réglages › Usages & tarifs).
+     * Format : [{ key, label }]
+     */
+    applications: { type: Array, default: () => [] },
+    /**
+     * Familles de matière administrées (Catalogue › Familles de matière).
+     * Format : [{ key, label }]
+     */
+    categories: { type: Array, default: () => [] },
 });
 
 const emit = defineEmits(['request-quote']);
@@ -15,27 +30,73 @@ const { t } = useI18n();
 
 const items = computed(() => props.products);
 
-const APPLICATIONS = [
-    { key: 'all', label: 'catalogue.all' },
-    { key: 'sol', label: 'application.sol' },
-    { key: 'cuisine', label: 'application.cuisine_short' },
-    { key: 'salle-de-bain', label: 'application.salle-de-bain' },
-    { key: 'facade', label: 'application.facade' },
-    { key: 'escalier', label: 'application.escalier' },
-];
+/** Pastille par défaut d'une teinte inconnue de la liste administrée. */
+const DEFAULT_SWATCH = '#8b8e94';
 
-const COLORS = [
-    { key: 'all', label: 'catalogue.colours_all', swatch: 'linear-gradient(135deg,#f5f5f5,#141519)' },
-    { key: 'noir', label: 'colour.noir', swatch: '#141519' },
-    { key: 'blanc', label: 'colour.blanc', swatch: '#eceae5' },
-    { key: 'gris', label: 'colour.gris', swatch: '#8b8e94' },
-    { key: 'beige', label: 'colour.beige', swatch: '#cbb094' },
-    { key: 'brun', label: 'colour.brun', swatch: '#6b4a33' },
-    { key: 'vert', label: 'colour.vert', swatch: '#1e9d6b' },
-];
+/** Traduction du dictionnaire si elle existe, la clé brute sinon. */
+const translateOr = (key, fallback) => {
+    const translated = t(key);
+
+    return translated === key ? fallback : translated;
+};
+
+/**
+ * Boutons d'un filtre : uniquement les valeurs portées par au moins une
+ * fiche affichée, dans l'ordre du back-office. Une valeur présente sur une
+ * fiche mais absente de la liste (supprimée depuis, ou données de démo)
+ * reste filtrable, avec un libellé de repli.
+ */
+const buildOptions = (definitions, usedKeys, fallback) => {
+    const known = new Set(definitions.map((definition) => definition.key));
+
+    return [
+        ...definitions.filter((definition) => usedKeys.has(definition.key)),
+        ...[...usedKeys].filter((key) => !known.has(key)).map(fallback),
+    ];
+};
+
+const applicationOptions = computed(() =>
+    buildOptions(
+        props.applications,
+        new Set(items.value.flatMap((item) => item.applications ?? [])),
+        (key) => ({ key, label: translateOr(`application.${key}`, key) }),
+    ),
+);
+
+const colorOptions = computed(() =>
+    buildOptions(
+        props.colorFamilies,
+        new Set(items.value.map((item) => item.colorFamily).filter(Boolean)),
+        (key) => ({ key, label: translateOr(`colour.${key}`, key), swatch: DEFAULT_SWATCH }),
+    ),
+);
+
+const familyOptions = computed(() =>
+    buildOptions(
+        props.categories,
+        new Set(items.value.map((item) => item.categoryKey).filter(Boolean)),
+        (key) => ({ key, label: translateOr(`family.${key}`, key) }),
+    ),
+);
+
+const applicationFilters = computed(() => [
+    { key: 'all', label: t('catalogue.all') },
+    ...applicationOptions.value,
+]);
+
+const colorFilters = computed(() => [
+    { key: 'all', label: t('catalogue.colours_all'), swatch: 'linear-gradient(135deg,#f5f5f5,#141519)' },
+    ...colorOptions.value,
+]);
+
+const familyFilters = computed(() => [
+    { key: 'all', label: t('catalogue.families_all') },
+    ...familyOptions.value,
+]);
 
 const activeApplication = ref('all');
 const activeColor = ref('all');
+const activeFamily = ref('all');
 
 // Une photo encore absente du serveur ne doit pas afficher d'image cassée :
 // on bascule sur le visuel de remplacement.
@@ -53,20 +114,20 @@ const filtered = computed(() =>
 
         const matchesColor = activeColor.value === 'all' || item.colorFamily === activeColor.value;
 
-        return matchesApplication && matchesColor;
+        const matchesFamily = activeFamily.value === 'all' || item.categoryKey === activeFamily.value;
+
+        return matchesApplication && matchesColor && matchesFamily;
     }),
 );
 
 const resetFilters = () => {
     activeApplication.value = 'all';
     activeColor.value = 'all';
+    activeFamily.value = 'all';
 };
 
-const applicationLabel = (key) => {
-    const found = APPLICATIONS.find((a) => a.key === key);
-
-    return found ? t(found.label) : key;
-};
+const applicationLabel = (key) =>
+    applicationOptions.value.find((option) => option.key === key)?.label ?? key;
 
 // Même format dans les deux langues : chiffres occidentaux et espace comme
 // séparateur de milliers. Le point serait lu comme une virgule décimale.
@@ -100,10 +161,10 @@ const formatPrice = (value) =>
 
             <!-- Filtres -->
             <div class="mt-14 space-y-6" data-reveal data-reveal-delay="100">
-                <div class="flex flex-wrap items-center gap-2.5">
+                <div v-if="applicationOptions.length" class="flex flex-wrap items-center gap-2.5">
                     <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-obsidian-500 sm:inline">{{ t('catalogue.filter_usage') }}</span>
                     <button
-                        v-for="app in APPLICATIONS"
+                        v-for="app in applicationFilters"
                         :key="app.key"
                         type="button"
                         class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
@@ -115,14 +176,14 @@ const formatPrice = (value) =>
                         :aria-pressed="activeApplication === app.key"
                         @click="activeApplication = app.key"
                     >
-                        {{ t(app.label) }}
+                        {{ app.label }}
                     </button>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2.5">
+                <div v-if="colorOptions.length" class="flex flex-wrap items-center gap-2.5">
                     <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-obsidian-500 sm:inline">{{ t('catalogue.filter_colour') }}</span>
                     <button
-                        v-for="color in COLORS"
+                        v-for="color in colorFilters"
                         :key="color.key"
                         type="button"
                         class="group flex items-center gap-2.5 rounded-full border py-2 ps-2 pe-5 text-sm font-medium transition-all duration-300"
@@ -139,7 +200,26 @@ const formatPrice = (value) =>
                             :style="{ background: color.swatch }"
                             aria-hidden="true"
                         />
-                        {{ t(color.label) }}
+                        {{ color.label }}
+                    </button>
+                </div>
+
+                <div v-if="familyOptions.length" class="flex flex-wrap items-center gap-2.5">
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-obsidian-500 sm:inline">{{ t('catalogue.filter_family') }}</span>
+                    <button
+                        v-for="family in familyFilters"
+                        :key="family.key"
+                        type="button"
+                        class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
+                        :class="
+                            activeFamily === family.key
+                                ? 'border-brand-400 bg-brand-500/15 text-brand-300'
+                                : 'border-white/10 bg-white/5 text-obsidian-300 hover:border-white/25 hover:text-white'
+                        "
+                        :aria-pressed="activeFamily === family.key"
+                        @click="activeFamily = family.key"
+                    >
+                        {{ family.label }}
                     </button>
                 </div>
             </div>
@@ -164,6 +244,8 @@ const formatPrice = (value) =>
                             v-if="hasImage(product)"
                             :src="product.image"
                             :alt="`${product.name} — ${product.color}`"
+                            width="1200"
+                            height="900"
                             class="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-110"
                             loading="lazy"
                             decoding="async"

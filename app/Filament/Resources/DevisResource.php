@@ -4,11 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DevisResource\Pages;
 use App\Models\Devis;
+use App\Models\InstallationRate;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DevisResource extends Resource
 {
@@ -16,24 +18,36 @@ class DevisResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
-    protected static ?string $navigationGroup = 'Clients';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Clients');
+    }
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'devis';
 
-    protected static ?string $modelLabel = 'demande de devis';
+    public static function getModelLabel(): string
+    {
+        return __('demande de devis');
+    }
 
-    protected static ?string $pluralModelLabel = 'demandes de devis';
+    public static function getPluralModelLabel(): string
+    {
+        return __('demandes de devis');
+    }
 
-    protected static ?string $navigationLabel = 'Demandes de devis';
+    public static function getNavigationLabel(): string
+    {
+        return __('Demandes de devis');
+    }
 
     protected static ?string $recordTitleAttribute = 'client_name';
 
     /** Filament met le libellé en capitales de titre : « Demandes De Devis ». */
     public static function getBreadcrumb(): string
     {
-        return 'Demandes de devis';
+        return __('Demandes de devis');
     }
 
     public const STATUSES = [
@@ -41,6 +55,12 @@ class DevisResource extends Resource
         'contacted' => 'Contacté',
         'completed' => 'Terminé',
     ];
+
+    /** Statuts dans la langue du back-office (le français sert de clé). */
+    public static function statusOptions(): array
+    {
+        return array_map(fn (string $label) => __($label), self::STATUSES);
+    }
 
     /** Couleur du badge de statut, partagée par le tableau et le formulaire. */
     public static function statusColor(?string $status): string
@@ -75,72 +95,72 @@ class DevisResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Suivi')
-                ->description('Seul le statut et les notes internes sont modifiables.')
+            Forms\Components\Section::make(__('Suivi'))
+                ->description(__('Seul le statut et les notes internes sont modifiables.'))
                 ->columns(2)
                 ->schema([
                     Forms\Components\Select::make('status')
-                        ->label('Statut')
-                        ->options(self::STATUSES)
+                        ->label(__('Statut'))
+                        ->options(fn () => self::statusOptions())
                         ->default('pending')
                         ->required()
                         ->native(false),
                 ]),
 
-            Forms\Components\Section::make('Le client')
+            Forms\Components\Section::make(__('Le client'))
                 ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('client_name')
-                        ->label('Nom')
+                        ->label(__('Nom'))
                         ->disabled(),
 
                     Forms\Components\TextInput::make('phone')
-                        ->label('Téléphone')
+                        ->label(__('Téléphone'))
                         ->tel()
                         ->disabled(),
 
                     Forms\Components\TextInput::make('email')
-                        ->label('E-mail')
+                        ->label(__('E-mail'))
                         ->disabled()
-                        ->placeholder('Non renseigné'),
+                        ->placeholder(__('Non renseigné')),
 
                     Forms\Components\TextInput::make('location')
-                        ->label('Ville / Quartier')
+                        ->label(__('Ville / Quartier'))
                         ->disabled()
-                        ->placeholder('Non renseignée'),
+                        ->placeholder(__('Non renseignée')),
                 ]),
 
-            Forms\Components\Section::make('Le projet')
+            Forms\Components\Section::make(__('Le projet'))
                 ->columns(3)
                 ->schema([
                     Forms\Components\TextInput::make('product.name')
-                        ->label('Matériau demandé')
-                        ->formatStateUsing(fn ($record) => $record?->product?->name ?? 'À définir')
+                        ->label(__('Matériau demandé'))
+                        ->formatStateUsing(fn ($record) => $record?->product?->name ?? __('À définir'))
                         ->disabled(),
 
                     Forms\Components\TextInput::make('application')
-                        ->label('Application')
-                        ->formatStateUsing(fn (?string $state) => \App\Models\Product::APPLICATIONS[$state] ?? $state ?? '—')
+                        ->label(__('Application'))
+                        ->formatStateUsing(fn (?string $state) => InstallationRate::labelFor($state, 'fr') ?? '—')
                         ->disabled(),
 
                     Forms\Components\TextInput::make('surface_m2')
-                        ->label('Surface')
-                        ->suffix('m²')
+                        ->label(__('Surface'))
+                        ->suffix(__('m²'))
                         ->disabled(),
 
                     Forms\Components\TextInput::make('estimated_total')
-                        ->label('Estimation en ligne')
-                        ->suffix('DH')
+                        ->label(__('Estimation en ligne'))
+                        ->suffix(__('DH'))
                         ->disabled()
-                        ->placeholder('Non calculée')
-                        ->helperText('Fourchette indicative générée par le site, à confirmer après métré.'),
+                        ->placeholder(__('Non calculée'))
+                        ->helperText(__('Fourchette indicative générée par le site, à confirmer après métré.')),
 
                     Forms\Components\Textarea::make('message')
-                        ->label('Message du client')
+                        ->label(__('Message du client'))
                         ->rows(4)
                         ->disabled()
                         ->columnSpanFull()
-                        ->placeholder('Aucun message'),
+                        ->placeholder(__('Aucun message')),
                 ]),
         ]);
     }
@@ -150,89 +170,89 @@ class DevisResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Reçue')
+                    ->label(__('Reçue'))
                     ->dateTime('d/m/Y H:i')
                     ->description(fn (Devis $record) => $record->created_at?->diffForHumans())
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('client_name')
-                    ->label('Client')
+                    ->label(__('Client'))
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
                     ->description(fn (Devis $record) => $record->location),
 
                 Tables\Columns\TextColumn::make('phone')
-                    ->label('Téléphone')
+                    ->label(__('Téléphone'))
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('Numéro copié'),
+                    ->copyMessage(__('Numéro copié')),
 
                 Tables\Columns\TextColumn::make('product.name')
-                    ->label('Matériau')
-                    ->placeholder('À définir')
+                    ->label(__('Matériau'))
+                    ->placeholder(__('À définir'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('surface_m2')
-                    ->label('Surface')
+                    ->label(__('Surface'))
                     ->numeric(decimalPlaces: 1, thousandsSeparator: ' ')
-                    ->suffix(' m²')
+                    ->suffix(__(' m²'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('estimated_total')
-                    ->label('Estimation')
+                    ->label(__('Estimation'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: ' ')
-                    ->suffix(' DH')
-                    ->placeholder('—')
+                    ->suffix(__(' DH'))
+                    ->placeholder(__('—'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Statut')
+                    ->label(__('Statut'))
                     ->badge()
-                    ->formatStateUsing(fn (?string $state) => self::STATUSES[$state] ?? $state)
+                    ->formatStateUsing(fn (?string $state) => self::statusOptions()[$state] ?? $state)
                     ->color(fn (?string $state) => self::statusColor($state))
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Statut')
-                    ->options(self::STATUSES),
+                    ->label(__('Statut'))
+                    ->options(fn () => self::statusOptions()),
 
                 Tables\Filters\Filter::make('recentes')
-                    ->label('Reçues cette semaine')
+                    ->label(__('Reçues cette semaine'))
                     ->query(fn ($query) => $query->where('created_at', '>=', now()->subWeek())),
             ])
             ->actions([
                 // Contact direct depuis le tableau, sans ouvrir la fiche.
                 Tables\Actions\Action::make('whatsapp')
-                    ->label('WhatsApp')
+                    ->label(__('WhatsApp'))
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
                     ->url(fn (Devis $record) => self::whatsappUrl($record), shouldOpenInNewTab: true),
 
                 Tables\Actions\Action::make('appeler')
-                    ->label('Appeler')
+                    ->label(__('Appeler'))
                     ->icon('heroicon-o-phone')
                     ->color('gray')
                     ->url(fn (Devis $record) => 'tel:'.self::normalisePhone($record->phone)),
 
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\EditAction::make()->label('Ouvrir la fiche'),
+                    Tables\Actions\EditAction::make()->label(__('Ouvrir la fiche')),
 
                     Tables\Actions\Action::make('marquer_contacte')
-                        ->label('Marquer « Contacté »')
+                        ->label(__('Marquer « Contacté »'))
                         ->icon('heroicon-o-check')
                         ->color('info')
                         ->visible(fn (Devis $record) => $record->status === 'pending')
-                        ->action(fn (Devis $record) => $record->update(['status' => 'contacted'])),
+                        ->action(fn (Devis $record) => $record->markAs('contacted')),
 
                     Tables\Actions\Action::make('marquer_termine')
-                        ->label('Marquer « Terminé »')
+                        ->label(__('Marquer « Terminé »'))
                         ->icon('heroicon-o-check-badge')
                         ->color('success')
                         ->visible(fn (Devis $record) => $record->status !== 'completed')
-                        ->action(fn (Devis $record) => $record->update(['status' => 'completed'])),
+                        ->action(fn (Devis $record) => $record->markAs('completed')),
 
                     Tables\Actions\DeleteAction::make(),
                 ]),
@@ -242,8 +262,8 @@ class DevisResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('Aucune demande pour le moment')
-            ->emptyStateDescription('Les devis envoyés depuis le site apparaîtront ici.')
+            ->emptyStateHeading(__('Aucune demande pour le moment'))
+            ->emptyStateDescription(__('Les devis envoyés depuis le site apparaîtront ici.'))
             ->poll('60s');
     }
 
@@ -297,7 +317,7 @@ class DevisResource extends Resource
             .'?text='.rawurlencode(implode("\n", $lines));
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with('product');
     }

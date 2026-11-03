@@ -13,17 +13,17 @@ class ListInstallationRates extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Ajouter un tarif'),
+            Actions\CreateAction::make()->label(__('Ajouter un usage')),
         ];
     }
 
     public function getTitle(): string
     {
-        return 'Tarifs de pose';
+        return __('Usages & tarifs de pose');
     }
 
     public function getSubheading(): ?string
     {
-        return "Modifiez un tarif directement dans la colonne « Tarif » : l'estimateur du site l'applique immédiatement.";
+        return __("Chaque usage sert de case à cocher sur les fiches, de filtre dans le catalogue et de choix dans l'estimateur. Modifiez un tarif directement dans la colonne « Tarif » : il s'applique immédiatement.");
     }
 }

@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class InstallationRateResource extends Resource
 {
@@ -17,75 +18,107 @@ class InstallationRateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Réglages';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Réglages');
+    }
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'tarifs-pose';
 
-    protected static ?string $modelLabel = 'tarif de pose';
+    public static function getModelLabel(): string
+    {
+        return __('usage');
+    }
 
-    protected static ?string $pluralModelLabel = 'tarifs de pose';
+    public static function getPluralModelLabel(): string
+    {
+        return __('usages & tarifs de pose');
+    }
 
-    protected static ?string $navigationLabel = 'Tarifs de pose';
+    public static function getNavigationLabel(): string
+    {
+        return __('Usages & tarifs');
+    }
 
     protected static ?string $recordTitleAttribute = 'label';
 
     public static function getBreadcrumb(): string
     {
-        return 'Tarifs de pose';
+        return __('Usages & tarifs');
+    }
+
+    /** Nombre de fiches produit cochées pour cet usage. */
+    public static function productCount(InstallationRate $record): int
+    {
+        return Product::whereJsonContains('applications', $record->application)->count();
     }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Tarif de main d\'œuvre')
-                ->description("Montant facturé au m² pour la pose, hors fourniture de la pierre. C'est la valeur utilisée par l'estimateur de devis du site.")
+            Forms\Components\Section::make(__('Usage'))
+                ->description(__('Un usage apparaît à la fois dans les cases « Usages » des fiches marbre, dans le filtre du catalogue (dès qu\'une fiche le porte) et dans l\'estimateur de devis.'))
                 ->columns(2)
                 ->schema([
-                    Forms\Components\Select::make('application')
-                        ->label('Type de pose')
-                        ->options(Product::APPLICATIONS)
-                        ->required()
-                        ->native(false)
-                        ->unique(ignoreRecord: true)
-                        ->live()
-                        // Le libellé suit le type choisi tant qu'il n'a pas été
-                        // personnalisé à la main.
-                        ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
-                            if (blank($get('label')) && filled($state)) {
-                                $set('label', Product::APPLICATIONS[$state] ?? null);
-                            }
-                        })
-                        ->helperText('Doit correspondre à un usage du catalogue.'),
-
                     Forms\Components\TextInput::make('label')
-                        ->label('Nom affiché sur le site')
+                        ->label(__('Nom affiché sur le site'))
                         ->required()
                         ->maxLength(190)
-                        ->helperText('Texte du bouton dans l\'estimateur de devis.'),
+                        ->live(onBlur: true)
+                        // La clé technique suit le nom à la création seulement.
+                        ->afterStateUpdated(function (string $operation, $state, Forms\Set $set) {
+                            if ($operation === 'create') {
+                                $set('application', Str::slug($state));
+                            }
+                        })
+                        ->placeholder(__('Terrasse, Piscine, Plan vasque…')),
+
+                    Forms\Components\TextInput::make('label_ar')
+                        ->label(__('Nom en arabe'))
+                        ->maxLength(190)
+                        ->extraInputAttributes(['dir' => 'rtl'])
+                        ->helperText(__('Facultatif : le nom français s\'affiche à défaut.')),
+
+                    Forms\Components\TextInput::make('application')
+                        ->label(__('Identifiant'))
+                        ->required()
+                        ->maxLength(60)
+                        ->alphaDash()
+                        ->unique(ignoreRecord: true)
+                        // Les fiches et les demandes de devis référencent cette
+                        // clé : la modifier les détacherait de l'usage.
+                        ->disabledOn('edit')
+                        ->helperText(__('Généré depuis le nom, non modifiable ensuite.')),
+                ]),
+
+            Forms\Components\Section::make(__('Tarif de main d\'œuvre'))
+                ->description(__("Montant facturé au m² pour la pose, hors fourniture de la pierre. C'est la valeur utilisée par l'estimateur de devis du site."))
+                ->columns(2)
+                ->schema([
 
                     Forms\Components\TextInput::make('rate_per_m2')
-                        ->label('Tarif de pose')
+                        ->label(__('Tarif de pose'))
                         ->numeric()
                         ->required()
                         ->minValue(0)
                         ->maxValue(100000)
                         ->step(10)
-                        ->suffix('DH / m²')
-                        ->helperText('Exemple : 220 DH/m² pour un plan de travail de cuisine.'),
+                        ->suffix(__('DH / m²'))
+                        ->helperText(__('Exemple : 220 DH/m² pour un plan de travail de cuisine.')),
 
                     Forms\Components\TextInput::make('sort_order')
-                        ->label('Ordre d\'affichage')
+                        ->label(__('Ordre d\'affichage'))
                         ->numeric()
                         ->default(0)
-                        ->helperText('Le plus petit nombre apparaît en premier.'),
+                        ->helperText(__('Le plus petit nombre apparaît en premier.')),
 
                     Forms\Components\Toggle::make('is_active')
-                        ->label('Proposé aux visiteurs')
+                        ->label(__('Proposé dans l\'estimateur de devis'))
                         ->default(true)
                         ->columnSpanFull()
-                        ->helperText('Désactivé, ce type de pose disparaît de l\'estimateur du site.'),
+                        ->helperText(__('Désactivé, l\'usage disparaît de l\'estimateur mais reste un filtre du catalogue.')),
                 ]),
         ]);
     }
@@ -95,7 +128,7 @@ class InstallationRateResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('label')
-                    ->label('Type de pose')
+                    ->label(__('Usage'))
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
@@ -104,21 +137,27 @@ class InstallationRateResource extends Resource
                 // Modifiable directement dans le tableau : c'est le geste le
                 // plus fréquent, il ne doit pas demander d'ouvrir une fiche.
                 Tables\Columns\TextInputColumn::make('rate_per_m2')
-                    ->label('Tarif (DH / m²)')
+                    ->label(__('Tarif (DH / m²)'))
                     ->type('number')
                     ->rules(['required', 'numeric', 'min:0', 'max:100000'])
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Actif'),
+                    ->label(__('Estimateur')),
+
+                Tables\Columns\TextColumn::make('products')
+                    ->label(__('Fiches'))
+                    ->state(fn (InstallationRate $record) => static::productCount($record))
+                    ->badge()
+                    ->color('gray'),
 
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Ordre')
+                    ->label(__('Ordre'))
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Modifié')
+                    ->label(__('Modifié'))
                     ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -127,11 +166,16 @@ class InstallationRateResource extends Resource
             ->paginated(false)
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Un usage encore coché sur des fiches ne se supprime pas : ces
+                // fiches perdraient leur filtre. Le désactiver suffit à le
+                // retirer de l'estimateur.
+                Tables\Actions\DeleteAction::make()
+                    ->hidden(fn (InstallationRate $record) => static::productCount($record) > 0),
             ])
-            ->emptyStateHeading('Aucun tarif de pose')
-            ->emptyStateDescription("Sans tarif, l'estimateur applique une valeur de repli de "
-                .number_format(InstallationRate::FALLBACK_RATE, 0, ',', ' ').' DH/m².');
+            ->emptyStateHeading(__('Aucun usage'))
+            ->emptyStateDescription(__("Sans tarif, l'estimateur applique une valeur de repli de :rate DH/m².", [
+                'rate' => number_format(InstallationRate::FALLBACK_RATE, 0, ',', ' '),
+            ]));
     }
 
     public static function getPages(): array

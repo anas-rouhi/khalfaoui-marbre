@@ -9,31 +9,8 @@ class Product extends Model
 {
     use HasTranslations;
 
-    /**
-     * Familles de teintes proposées par le filtre du catalogue.
-     * Les clés doivent rester identiques à celles de CatalogueSection.vue.
-     */
-    public const COLOR_FAMILIES = [
-        'noir' => 'Noir',
-        'blanc' => 'Blanc',
-        'gris' => 'Gris',
-        'beige' => 'Beige',
-        'brun' => 'Brun',
-        'vert' => 'Vert',
-    ];
-
-    /**
-     * Usages proposés par le filtre du catalogue et par l'estimateur de devis.
-     * Les clés doivent rester identiques à celles de CatalogueSection.vue
-     * et DevisSection.vue.
-     */
-    public const APPLICATIONS = [
-        'sol' => 'Sol',
-        'cuisine' => 'Plan de travail / Cuisine',
-        'salle-de-bain' => 'Salle de bain',
-        'facade' => 'Façade',
-        'escalier' => 'Escalier',
-    ];
+    // Teinte et usages sont administrés depuis le back-office :
+    // `color_family` → ColorFamily::key, `applications` → InstallationRate::application.
 
     protected $guarded = [];
 
@@ -46,6 +23,11 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function colorFamily()
+    {
+        return $this->belongsTo(ColorFamily::class, 'color_family', 'key');
     }
 
     public function images()

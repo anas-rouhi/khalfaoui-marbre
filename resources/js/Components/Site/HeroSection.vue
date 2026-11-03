@@ -5,7 +5,7 @@ import { useI18n } from '@/Composables/useI18n';
 
 defineProps({
     /** Remplacez par votre plus belle photo de chantier (1920×1280 min). */
-    image: { type: String, default: '/images/hero/hero-cuisine-granit.jpg' },
+    image: { type: String, default: '/images/hero/hero-cuisine-granit.webp' },
 });
 
 const { company, whatsappLink } = useCompany();
@@ -31,6 +31,8 @@ const stats = [
                 v-show="!imageFailed"
                 :src="image"
                 :alt="t('hero.image_alt')"
+                width="1920"
+                height="1280"
                 class="h-full w-full origin-center object-cover object-center animate-slow-pan"
                 fetchpriority="high"
                 decoding="async"

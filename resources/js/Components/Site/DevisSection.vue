@@ -17,7 +17,7 @@ const props = defineProps({
 
 const page = usePage();
 const { company, whatsappLink } = useCompany();
-const { t, locale } = useI18n();
+const { t } = useI18n();
 
 /** Repli si la table des tarifs est vide, pour que l'estimateur reste utilisable. */
 const FALLBACK_APPLICATIONS = [
@@ -28,10 +28,9 @@ const FALLBACK_APPLICATIONS = [
     { key: 'facade', ratePerM2: 260 },
 ];
 
-// Le libellé administré reste la référence ; s'il n'est pas traduit, on
-// retombe sur le dictionnaire par clé d'usage.
-const applicationLabel = (app) =>
-    locale.value === 'fr' && app?.label ? app.label : t(`application.${app?.key}`);
+// Libellé administré, déjà dans la langue de la page (repli sur le français
+// côté serveur) ; le dictionnaire ne sert qu'aux usages de repli ci-dessus.
+const applicationLabel = (app) => app?.label || t(`application.${app?.key}`);
 
 const APPLICATIONS = computed(() =>
     props.installationRates.length ? props.installationRates : FALLBACK_APPLICATIONS,
@@ -50,7 +49,32 @@ const form = useForm({
     application: defaultApplication,
     surface_m2: 12,
     message: '',
+    // Champ piège (honeypot) : doit rester vide.
+    website: '',
 });
+
+/**
+ * Données réellement envoyées au serveur.
+ *
+ * Tant que la base est vide, le catalogue affiché est celui de démonstration,
+ * dont les identifiants (« demo-… ») n'existent pas en base : les envoyer
+ * ferait échouer la validation. Le matériau choisi est alors transmis en
+ * clair dans le message, pour que l'équipe le connaisse quand même.
+ */
+const payload = (data) => {
+    if (data.product_id === null || Number.isInteger(data.product_id)) {
+        return data;
+    }
+
+    const name = props.products.find((product) => product.id === data.product_id)?.name;
+    const material = name ? `${t('whatsapp.order_material')} : ${name}` : '';
+
+    return {
+        ...data,
+        product_id: null,
+        message: [material, data.message].filter(Boolean).join('\n'),
+    };
+};
 
 // Le catalogue peut pousser une référence ici via l'événement « request-quote ».
 watch(
@@ -162,7 +186,7 @@ const downloadPdf = async () => {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-XSRF-TOKEN': decodeURIComponent(readCookie('XSRF-TOKEN') ?? ''),
             },
-            body: JSON.stringify(form.data()),
+            body: JSON.stringify(payload(form.data())),
             // Garde-fou : sans cela, une redirection serait suivie puis
             // enregistrée telle quelle sous le nom « devis.pdf ».
             redirect: 'error',
@@ -202,7 +226,7 @@ const downloadPdf = async () => {
 };
 
 const submit = () => {
-    form.post(route('devis.store'), {
+    form.transform(payload).post(route('devis.store'), {
         preserveScroll: true,
         onSuccess: () => {
             succeeded.value = true;
@@ -236,6 +260,13 @@ const submit = () => {
                     novalidate
                     @submit.prevent="submit"
                 >
+                    <!-- Champ piège anti-robot : invisible et hors navigation clavier,
+                         il reste vide pour un visiteur humain. -->
+                    <div class="sr-only" aria-hidden="true">
+                        <label for="devis-website">Site web</label>
+                        <input id="devis-website" v-model="form.website" type="text" name="website" tabindex="-1" autocomplete="off" />
+                    </div>
+
                     <fieldset :disabled="form.processing" class="space-y-7">
                         <!-- Étape 1 : le matériau -->
                         <div>

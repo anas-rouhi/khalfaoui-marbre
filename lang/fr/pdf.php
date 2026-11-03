@@ -1,0 +1,40 @@
+<?php
+
+// Libellés du devis PDF (resources/views/pdf/devis.blade.php).
+
+return [
+    'label' => 'Devis estimatif',
+    'title' => 'Offre de prix',
+    'reference' => 'Référence',
+    'date' => 'Date',
+    'validity' => 'Validité',
+    'validity_value' => '30 jours',
+    'phone' => 'Tél / WhatsApp',
+    'client' => 'Client',
+    'site' => 'Chantier',
+    'material_tbd' => 'Matériau à définir',
+    'designation' => 'Désignation',
+    'unit_price' => 'Prix unitaire',
+    'quantity' => 'Quantité',
+    'amount' => 'Montant',
+    'supply' => 'Fourniture',
+    'material' => 'Matériau',
+    'origin' => 'Origine',
+    'installation' => 'Pose et finitions',
+    'installation_detail' => 'main d\'œuvre, découpes et chants',
+    'total' => 'Total estimé',
+    'client_notes' => 'Précisions du client',
+    'conditions' => 'Conditions',
+    'terms' => [
+        'Devis estimatif établi à partir des informations communiquées en ligne. Le prix définitif est arrêté après métré contradictoire sur site.',
+        'Montants exprimés en dirhams, toutes taxes comprises.',
+        'Prix hors transport, dépose de l\'existant, travaux de maçonnerie et raccordements de plomberie ou d\'électricité.',
+        'La pierre naturelle est un matériau vivant : le veinage et la teinte varient d\'un bloc à l\'autre. Les tranches sont validées avec le client avant découpe.',
+        'Offre valable 30 jours à compter de la date d\'émission, sous réserve de disponibilité en stock.',
+        'Délai indicatif de réalisation : 2 à 5 semaines selon la nature du chantier.',
+    ],
+    'next_step' => 'Passons à l\'étape suivante',
+    'next_step_detail' => 'Nous convenons d\'un métré gratuit, chez vous, sous 48 heures.',
+    'currency' => 'DH',
+    'unit' => 'm²',
+];

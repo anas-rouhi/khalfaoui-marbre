@@ -5,6 +5,11 @@ import { useI18n } from '@/Composables/useI18n';
 
 const props = defineProps({
     projects: { type: Array, default: () => [] },
+    /**
+     * Types de projet administrés (Catalogue › Types de projet), dans l'ordre
+     * du back-office et déjà traduits. Format : [{ key, label }]
+     */
+    projectTypes: { type: Array, default: () => [] },
 });
 
 const { t } = useI18n();
@@ -20,15 +25,34 @@ const compared = computed(() => comparable.value[comparedIndex.value] ?? null);
 
 const items = computed(() => props.projects);
 
-// `value: null` = aucun filtre. Le libellé « Tout » change avec la langue :
-// on filtre donc sur une valeur stable, jamais sur le texte affiché.
-const categories = computed(() => [
-    { value: null, label: t('projects.all') },
-    ...[...new Set(items.value.map((item) => item.category).filter(Boolean))].map((category) => ({
-        value: category,
-        label: category,
-    })),
-]);
+/**
+ * Boutons de filtre : uniquement les types portés par au moins une
+ * réalisation affichée (le serveur n'envoie que les réalisations publiées),
+ * dans l'ordre du back-office. Un type absent de la liste — supprimé depuis,
+ * ou données de démonstration — reste filtrable sous son libellé brut.
+ *
+ * `value: null` = aucun filtre. On filtre sur la clé du type, jamais sur le
+ * texte affiché, qui change avec la langue.
+ */
+const categories = computed(() => {
+    const used = new Set(items.value.map((item) => item.categoryKey).filter(Boolean));
+    const known = new Set(props.projectTypes.map((type) => type.key));
+
+    const orphans = [...used]
+        .filter((key) => !known.has(key))
+        .map((key) => ({
+            key,
+            label: items.value.find((item) => item.categoryKey === key)?.category ?? key,
+        }));
+
+    return [
+        { value: null, label: t('projects.all') },
+        ...[...props.projectTypes.filter((type) => used.has(type.key)), ...orphans].map((type) => ({
+            value: type.key,
+            label: type.label,
+        })),
+    ];
+});
 
 const activeCategory = ref(null);
 
@@ -44,7 +68,7 @@ const onImageError = (project) => {
 const filtered = computed(() =>
     activeCategory.value === null
         ? items.value
-        : items.value.filter((item) => item.category === activeCategory.value),
+        : items.value.filter((item) => item.categoryKey === activeCategory.value),
 );
 
 /**
@@ -130,7 +154,9 @@ onBeforeUnmount(() => {
                     </p>
                 </div>
 
-                <div class="flex flex-wrap gap-2.5">
+                <!-- Masquée tant qu'aucune réalisation ne porte de type :
+                     un bouton « Tous » seul n'aurait aucun effet. -->
+                <div v-if="categories.length > 1" class="flex flex-wrap gap-2.5">
                     <button
                         v-for="category in categories"
                         :key="category.value ?? 'all'"
@@ -168,6 +194,8 @@ onBeforeUnmount(() => {
                         v-if="hasImage(project)"
                         :src="project.image"
                         :alt="project.title"
+                        width="1600"
+                        height="1200"
                         class="absolute inset-0 h-full w-full object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-110"
                         loading="lazy"
                         decoding="async"
@@ -297,6 +325,9 @@ onBeforeUnmount(() => {
                             <img
                                 :src="currentSlide.image"
                                 :alt="currentSlide.caption || lightbox.title"
+                                width="1600"
+                                height="1200"
+                                decoding="async"
                                 class="max-h-[62vh] w-full object-cover"
                             />
 

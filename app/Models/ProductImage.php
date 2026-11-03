@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\GeneratesWebpCopies;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductImage extends Model
 {
+    use GeneratesWebpCopies;
+
     protected $guarded = [];
 
     protected $casts = [
@@ -33,5 +36,10 @@ class ProductImage extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    protected function webpImageAttributes(): array
+    {
+        return ['image_path'];
     }
 }

@@ -44,12 +44,23 @@ return [
 
     'email' => 'KHALFAOUI-MARBRE@hotmail.com',
 
+    // Destinataire des alertes « nouvelle demande de devis ». Par défaut
+    // l'adresse publique ; surchargeable sans toucher au code.
+    'notification_email' => env('DEVIS_NOTIFICATION_EMAIL', 'KHALFAOUI-MARBRE@hotmail.com'),
+
     // `key` / `value_key` renvoient au dictionnaire de traduction ; `days` et
     // `time` restent le texte affiché à défaut de traduction.
     'hours' => [
         ['key' => 'hours.weekdays', 'days' => 'Lundi — Vendredi', 'time' => '08:00 — 19:00'],
         ['key' => 'hours.saturday', 'days' => 'Samedi', 'time' => '08:00 — 17:00'],
         ['key' => 'hours.sunday', 'days' => 'Dimanche', 'value_key' => 'hours.sunday_value', 'time' => 'Sur rendez-vous'],
+    ],
+
+    // Mêmes horaires au format Schema.org (données structurées Google).
+    // Le dimanche, ouvert sur rendez-vous seulement, n'y figure pas.
+    'opening_hours' => [
+        ['days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], 'opens' => '08:00', 'closes' => '19:00'],
+        ['days' => ['Saturday'], 'opens' => '08:00', 'closes' => '17:00'],
     ],
 
     // Coordonnées du dépôt, utilisées pour l'intégration Google Maps.

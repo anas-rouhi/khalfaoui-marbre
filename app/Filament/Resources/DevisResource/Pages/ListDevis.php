@@ -20,7 +20,7 @@ class ListDevis extends ListRecords
 
     public function getTitle(): string
     {
-        return 'Demandes de devis';
+        return __('Demandes de devis');
     }
 
     /**
@@ -34,10 +34,10 @@ class ListDevis extends ListRecords
             ->pluck('total', 'status');
 
         $tabs = [
-            'toutes' => Tab::make('Toutes')->badge($counts->sum()),
+            'toutes' => Tab::make(__('Toutes'))->badge($counts->sum()),
         ];
 
-        foreach (DevisResource::STATUSES as $status => $label) {
+        foreach (DevisResource::statusOptions() as $status => $label) {
             $tabs[$status] = Tab::make($label)
                 ->badge($counts[$status] ?? 0)
                 ->badgeColor(DevisResource::statusColor($status))

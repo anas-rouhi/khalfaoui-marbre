@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
+use App\Models\ColorFamily;
+use App\Models\InstallationRate;
 use App\Models\Product;
 use App\Support\MediaPath;
 use Filament\Forms;
@@ -10,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class ProductResource extends Resource
@@ -18,26 +21,38 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?string $navigationGroup = 'Catalogue';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Catalogue');
+    }
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $modelLabel = 'référence';
+    public static function getModelLabel(): string
+    {
+        return __('référence');
+    }
 
-    protected static ?string $pluralModelLabel = 'références';
+    public static function getPluralModelLabel(): string
+    {
+        return __('références');
+    }
 
-    protected static ?string $navigationLabel = 'Marbres & granits';
+    public static function getNavigationLabel(): string
+    {
+        return __('Marbres & granits');
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Identité de la pierre')
+            Forms\Components\Section::make(__('Identité de la pierre'))
                 ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('name')
-                        ->label('Nom commercial')
+                        ->label(__('Nom commercial'))
                         ->required()
                         ->maxLength(190)
                         ->live(onBlur: true)
@@ -51,126 +66,128 @@ class ProductResource extends Resource
                         }),
 
                     Forms\Components\TextInput::make('slug')
-                        ->label('Identifiant URL')
+                        ->label(__('Identifiant URL'))
                         ->required()
                         ->maxLength(190)
                         ->unique(ignoreRecord: true)
-                        ->helperText('Généré automatiquement depuis le nom.'),
+                        ->helperText(__('Généré automatiquement depuis le nom.')),
 
                     Forms\Components\Select::make('category_id')
-                        ->label('Famille')
-                        ->relationship('category', 'name')
+                        ->label(__('Famille de matière'))
+                        ->relationship('category', 'name', fn ($query) => $query->ordered())
                         ->searchable()
                         ->preload()
-                        ->createOptionForm([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Nom')
-                                ->required()
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('slug', Str::slug($state))),
-                            Forms\Components\TextInput::make('slug')
-                                ->label('Identifiant URL')
-                                ->required()
-                                ->unique('categories', 'slug'),
-                        ])
-                        ->helperText('Marbre, Granit, Travertin…'),
+                        // Nouvelle famille créée sans quitter la fiche : elle
+                        // devient aussitôt un bouton du filtre catalogue.
+                        ->createOptionForm(CategoryResource::formFields())
+                        ->helperText(__('Marbre, Granit, Travertin, Quartz… Détermine sous quel bouton « Famille » la pierre apparaît. Liste gérée dans Catalogue › Familles de matière.')),
 
                     Forms\Components\TextInput::make('name_ar')
-                        ->label('Nom en arabe')
+                        ->label(__('Nom en arabe'))
                         ->maxLength(190)
                         ->extraInputAttributes(['dir' => 'rtl'])
-                        ->helperText('Facultatif : le nom français s\x27affiche à défaut.'),
+                        ->helperText(__('Facultatif : le nom français s\'affiche à défaut.')),
 
                     Forms\Components\TextInput::make('origin')
-                        ->label('Origine')
+                        ->label(__('Origine'))
                         ->maxLength(190)
-                        ->placeholder('Maroc, Italie, Espagne…'),
+                        ->placeholder(__('Maroc, Italie, Espagne…')),
                 ]),
 
-            Forms\Components\Section::make('Aspect')
+            Forms\Components\Section::make(__('Aspect'))
                 ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('color')
-                        ->label('Couleur affichée')
+                        ->label(__('Couleur affichée'))
                         ->maxLength(190)
-                        ->placeholder('Noir veiné blanc')
-                        ->helperText('Texte libre montré sur la fiche.'),
+                        ->placeholder(__('Noir veiné blanc'))
+                        ->helperText(__('Texte libre montré sur la fiche.')),
 
                     Forms\Components\Select::make('color_family')
-                        ->label('Teinte (filtre du site)')
-                        ->options(Product::COLOR_FAMILIES)
+                        ->label(__('Teinte (filtre du site)'))
+                        ->options(fn () => ColorFamily::options())
                         ->native(false)
-                        ->helperText('Détermine sous quel bouton de teinte la pierre apparaît.'),
+                        ->searchable()
+                        // Nouvelle teinte créée sans quitter la fiche : elle
+                        // devient aussitôt un bouton du filtre catalogue.
+                        ->createOptionForm(ColorFamilyResource::formFields())
+                        ->createOptionUsing(fn (array $data) => ColorFamily::create($data)->key)
+                        ->helperText(__('Détermine sous quel bouton de teinte la pierre apparaît. Liste gérée dans Réglages › Teintes.')),
 
                     Forms\Components\TextInput::make('finish')
-                        ->label('Finition')
+                        ->label(__('Finition'))
                         ->maxLength(190)
-                        ->placeholder('Poli miroir, Adouci, Brossé…'),
+                        ->placeholder(__('Poli miroir, Adouci, Brossé…')),
 
                     Forms\Components\TextInput::make('price_per_m2')
-                        ->label('Prix indicatif')
+                        ->label(__('Prix indicatif'))
                         ->numeric()
                         ->minValue(0)
                         ->step(10)
-                        ->suffix('DH / m²')
-                        ->helperText('Laisser vide pour afficher « Prix sur demande ». Sert au calcul du devis en ligne.'),
+                        ->suffix(__('DH / m²'))
+                        ->helperText(__('Laisser vide pour afficher « Prix sur demande ». Sert au calcul du devis en ligne.')),
 
                     Forms\Components\CheckboxList::make('applications')
-                        ->label('Usages')
-                        ->options(Product::APPLICATIONS)
+                        ->label(__('Usages'))
+                        ->options(fn () => InstallationRate::options())
                         ->columns(2)
                         ->columnSpanFull()
-                        ->helperText('Détermine sous quels filtres d\'usage la pierre apparaît.'),
+                        ->helperText(__('Détermine sous quels filtres d\'usage la pierre apparaît. Pour ajouter un usage (Terrasse, Piscine…) : Réglages › Usages & tarifs.')),
 
                     Forms\Components\Textarea::make('description')
-                        ->label('Description')
+                        ->label(__('Description'))
                         ->rows(3)
                         ->maxLength(1000)
                         ->columnSpanFull(),
 
                     Forms\Components\TextInput::make('color_ar')
-                        ->label('Couleur en arabe')
+                        ->label(__('Couleur en arabe'))
                         ->maxLength(190)
                         ->extraInputAttributes(['dir' => 'rtl']),
 
                     Forms\Components\Textarea::make('description_ar')
-                        ->label('Description en arabe')
+                        ->label(__('Description en arabe'))
                         ->rows(3)
                         ->maxLength(1000)
                         ->columnSpanFull()
                         ->extraInputAttributes(['dir' => 'rtl'])
-                        ->helperText('Facultatif : la description française s\x27affiche à défaut.'),
+                        ->helperText(__('Facultatif : la description française s\'affiche à défaut.')),
 
                     Forms\Components\Toggle::make('featured')
-                        ->label('Mettre en avant')
-                        ->helperText('Les références mises en avant apparaissent en tête du catalogue.')
+                        ->label(__('Mettre en avant'))
+                        ->helperText(__('Les références mises en avant apparaissent en tête du catalogue.'))
                         ->columnSpanFull(),
                 ]),
 
-            Forms\Components\Section::make('Photographies')
-                ->description('La photo principale est celle affichée sur la carte du catalogue.')
+            Forms\Components\Section::make(__('Photographies'))
+                ->description(__('La photo principale est celle affichée sur la carte du catalogue.'))
                 ->schema([
                     Forms\Components\Repeater::make('images')
                         ->label('')
                         ->relationship()
-                        ->addActionLabel('Ajouter une photo')
+                        ->addActionLabel(__('Ajouter une photo'))
                         ->schema([
                             Forms\Components\FileUpload::make('image_path')
-                                ->label('Fichier')
+                                ->label(__('Fichier'))
                                 ->image()
+                                ->acceptedFileTypes(MediaPath::UPLOAD_MIME_TYPES)
+                                ->imageResizeMode('contain')
+                                ->imageResizeTargetWidth('1920')
+                                ->imageResizeTargetHeight('1920')
+                                ->imageResizeUpscale(false)
                                 ->disk('public')
                                 ->directory('products')
                                 ->visibility('public')
                                 ->imageEditor()
                                 ->maxSize(5120)
                                 ->required()
-                                ->helperText('JPG ou WebP, format paysage 4:3, 5 Mo maximum.'),
+                                ->helperText(__('JPG, PNG ou WebP, format paysage 4:3, 5 Mo maximum. Réduite automatiquement à 1920 px.')),
 
                             Forms\Components\Toggle::make('is_main')
-                                ->label('Photo principale')
-                                ->helperText('Une seule par référence : cocher ici décoche les autres.'),
+                                ->label(__('Photo principale'))
+                                ->helperText(__('Une seule par référence : cocher ici décoche les autres.')),
                         ])
-                        ->itemLabel(fn (array $state): ?string => ($state['is_main'] ?? false) ? 'Photo principale' : 'Photo')
+                        ->itemLabel(fn (array $state): ?string => ($state['is_main'] ?? false) ? __('Photo principale') : __('Photo'))
                         ->collapsible()
                         ->defaultItems(1),
                 ]),
@@ -182,7 +199,7 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('photo')
-                    ->label('Photo')
+                    ->label(__('Photo'))
                     // Les fiches livrées avec le site pointent vers /images/…
                     // et celles téléversées ici vers le disque « public » :
                     // le même résolveur que le site gère les deux.
@@ -195,52 +212,52 @@ class ProductResource extends Resource
                     ->defaultImageUrl(asset(ltrim(config('company.logo_mark'), '/'))),
 
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nom')
+                    ->label(__('Nom'))
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
                     ->description(fn (Product $record) => $record->color),
 
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Famille')
+                    ->label(__('Famille'))
                     ->badge()
                     ->color('gray')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('finish')
-                    ->label('Finition')
+                    ->label(__('Finition'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('price_per_m2')
-                    ->label('Prix / m²')
+                    ->label(__('Prix / m²'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: ' ')
-                    ->suffix(' DH')
-                    ->placeholder('Sur demande')
+                    ->suffix(__(' DH'))
+                    ->placeholder(__('Sur demande'))
                     ->sortable(),
 
                 Tables\Columns\IconColumn::make('featured')
-                    ->label('En avant')
+                    ->label(__('En avant'))
                     ->boolean()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Modifiée')
+                    ->label(__('Modifiée'))
                     ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('name')
             ->filters([
                 Tables\Filters\SelectFilter::make('category_id')
-                    ->label('Famille')
+                    ->label(__('Famille'))
                     ->relationship('category', 'name')
                     ->preload(),
 
                 Tables\Filters\SelectFilter::make('color_family')
-                    ->label('Teinte')
-                    ->options(Product::COLOR_FAMILIES),
+                    ->label(__('Teinte'))
+                    ->options(fn () => ColorFamily::options()),
 
                 Tables\Filters\TernaryFilter::make('featured')
-                    ->label('Mise en avant'),
+                    ->label(__('Mise en avant')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -251,11 +268,11 @@ class ProductResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('Aucune référence')
-            ->emptyStateDescription('Ajoutez vos marbres et granits pour les faire apparaître sur le site.');
+            ->emptyStateHeading(__('Aucune référence'))
+            ->emptyStateDescription(__('Ajoutez vos marbres et granits pour les faire apparaître sur le site.'));
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with(['category', 'mainImage', 'images']);
     }

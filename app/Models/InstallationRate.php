@@ -2,11 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
+/**
+ * Usage d'une pierre (Sol, Cuisine, Escalier…) et son tarif de pose.
+ *
+ * C'est la liste unique des usages du site : cases à cocher des fiches
+ * produit, boutons du filtre catalogue et choix de l'estimateur de devis.
+ * `is_active` ne concerne que l'estimateur ; le filtre du catalogue montre
+ * tout usage porté par au moins une fiche.
+ */
 class InstallationRate extends Model
 {
+    use HasTranslations;
+
     /**
      * Tarif appliqué lorsqu'aucune ligne ne correspond à l'application
      * demandée — par exemple si le gérant vient de la désactiver alors qu'un
@@ -16,11 +27,11 @@ class InstallationRate extends Model
 
     /** Valeurs de départ, reprises des tarifs pratiqués jusqu'ici. */
     public const DEFAULTS = [
-        ['application' => 'cuisine', 'label' => 'Plan de travail / Cuisine', 'rate_per_m2' => 220, 'sort_order' => 1],
-        ['application' => 'sol', 'label' => 'Sol', 'rate_per_m2' => 120, 'sort_order' => 2],
-        ['application' => 'salle-de-bain', 'label' => 'Salle de bain', 'rate_per_m2' => 180, 'sort_order' => 3],
-        ['application' => 'escalier', 'label' => 'Escalier', 'rate_per_m2' => 300, 'sort_order' => 4],
-        ['application' => 'facade', 'label' => 'Façade', 'rate_per_m2' => 260, 'sort_order' => 5],
+        ['application' => 'cuisine', 'label' => 'Plan de travail / Cuisine', 'label_ar' => 'سطح مطبخ', 'rate_per_m2' => 220, 'sort_order' => 1],
+        ['application' => 'sol', 'label' => 'Sol', 'label_ar' => 'أرضية', 'rate_per_m2' => 120, 'sort_order' => 2],
+        ['application' => 'salle-de-bain', 'label' => 'Salle de bain', 'label_ar' => 'حمام', 'rate_per_m2' => 180, 'sort_order' => 3],
+        ['application' => 'escalier', 'label' => 'Escalier', 'label_ar' => 'درج', 'rate_per_m2' => 300, 'sort_order' => 4],
+        ['application' => 'facade', 'label' => 'Façade', 'label_ar' => 'واجهة', 'rate_per_m2' => 260, 'sort_order' => 5],
     ];
 
     protected $guarded = [];
@@ -38,6 +49,27 @@ class InstallationRate extends Model
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get();
+    }
+
+    /** Options « clé => libellé » pour les listes du back-office. */
+    public static function options(): array
+    {
+        return static::query()->orderBy('sort_order')->orderBy('label')->pluck('label', 'application')->all();
+    }
+
+    /**
+     * Libellé d'un usage dans la langue voulue, même désactivé ; la clé brute
+     * en dernier recours, si l'usage a été supprimé depuis.
+     */
+    public static function labelFor(?string $application, ?string $locale = null): ?string
+    {
+        if (blank($application)) {
+            return null;
+        }
+
+        return static::query()->firstWhere('application', $application)?->translated('label', $locale)
+            ?? collect(self::DEFAULTS)->firstWhere('application', $application)['label']
+            ?? $application;
     }
 
     /**

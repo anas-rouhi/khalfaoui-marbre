@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\DevisResource;
+use App\Filament\Resources\DevisResource\Pages\EditDevis;
 use App\Filament\Resources\DevisResource\Pages\ListDevis;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\ProductResource\Pages\CreateProduct;
@@ -121,7 +122,7 @@ class AdminPanelTest extends TestCase
         Livewire::test(ProjectResource\Pages\CreateProject::class)
             ->fillForm([
                 'title' => 'Villa contemporaine',
-                'category' => 'Villa',
+                'category' => 'villa',
                 'location' => 'Bouskoura, Casablanca',
                 'year' => 2025,
                 'sort_order' => 1,
@@ -146,7 +147,7 @@ class AdminPanelTest extends TestCase
     {
         $this->actingAs($this->admin());
 
-        $devis = Devis::create([
+        $devis = Devis::forceCreate([
             'client_name' => 'Youssef Bennani',
             'phone' => '0661219409',
             'status' => 'pending',
@@ -158,11 +159,31 @@ class AdminPanelTest extends TestCase
         $this->assertSame('contacted', $devis->fresh()->status);
     }
 
+    public function test_le_statut_peut_etre_change_depuis_la_fiche(): void
+    {
+        $this->actingAs($this->admin());
+
+        $devis = Devis::forceCreate([
+            'client_name' => 'Youssef Bennani',
+            'phone' => '0661219409',
+            'status' => 'pending',
+        ]);
+
+        // `status` n'est pas assignable en masse : la fiche doit quand même
+        // pouvoir l'enregistrer.
+        Livewire::test(EditDevis::class, ['record' => $devis->getKey()])
+            ->fillForm(['status' => 'completed'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('completed', $devis->fresh()->status);
+    }
+
     public function test_la_pastille_compte_les_demandes_a_rappeler(): void
     {
-        Devis::create(['client_name' => 'A', 'phone' => '0600000001', 'status' => 'pending']);
-        Devis::create(['client_name' => 'B', 'phone' => '0600000002', 'status' => 'pending']);
-        Devis::create(['client_name' => 'C', 'phone' => '0600000003', 'status' => 'completed']);
+        Devis::forceCreate(['client_name' => 'A', 'phone' => '0600000001', 'status' => 'pending']);
+        Devis::forceCreate(['client_name' => 'B', 'phone' => '0600000002', 'status' => 'pending']);
+        Devis::forceCreate(['client_name' => 'C', 'phone' => '0600000003', 'status' => 'completed']);
 
         $this->assertSame('2', DevisResource::getNavigationBadge());
     }
@@ -189,7 +210,7 @@ class AdminPanelTest extends TestCase
         $category = Category::create(['name' => 'Granit', 'slug' => 'granit']);
         $product = Product::create(['name' => 'Granit Noir Absolu', 'slug' => 'gna', 'category_id' => $category->id]);
 
-        $devis = Devis::create([
+        $devis = Devis::forceCreate([
             'client_name' => 'Youssef',
             'phone' => '0661219409',
             'product_id' => $product->id,
