@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Devis;
+use App\Models\InstallationRate;
 use App\Models\Product;
+use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -50,7 +52,7 @@ class DevisTest extends TestCase
 
     public function test_la_galerie_dune_realisation_est_exposee(): void
     {
-        $project = \App\Models\Project::create([
+        $project = Project::create([
             'title' => 'Villa de luxe à Anfa',
             'category' => 'Villa',
             'location' => 'Anfa, Casablanca',
@@ -105,7 +107,7 @@ class DevisTest extends TestCase
     {
         $product = $this->product(['price_per_m2' => 950]);
 
-        \App\Models\InstallationRate::create([
+        InstallationRate::create([
             'application' => 'cuisine',
             'label' => 'Plan de travail / Cuisine',
             'rate_per_m2' => 220,

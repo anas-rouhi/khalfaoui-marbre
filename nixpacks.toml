@@ -1,12 +1,15 @@
 [providers]
 providers = ["php", "node"]
 
+# PHP 8.3 : version exigée par composer.json (Laravel 13).
+# gd : copies WebP des photos téléversées et miniatures du PDF de devis.
+# calendar : exigée par une dépendance Composer (composer check-platform-reqs).
 [phases.setup]
-nixPkgs = ["...", "php82Extensions.intl", "php82Extensions.zip", "php82Extensions.pdo_mysql"]
+nixPkgs = ["...", "php83Extensions.intl", "php83Extensions.zip", "php83Extensions.pdo_mysql", "php83Extensions.gd", "php83Extensions.calendar"]
 
 [phases.install]
 cmds = [
-    "composer install --no-dev --optimize-autoloader --ignore-platform-reqs"
+    "composer install --no-dev --optimize-autoloader"
 ]
 
 [phases.build]

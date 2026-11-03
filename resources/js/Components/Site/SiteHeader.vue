@@ -88,7 +88,7 @@ const whatsappHref = computed(() => whatsappLink(t('whatsapp.general')));
                     </a>
                 </div>
 
-                <p class="tracking-[0.28em] text-stone-500 dark:text-obsidian-400">{{ t('nav.tagline') }}</p>
+                <p class="tracking-[0.28em] text-stone-500 dark:text-obsidian-300">{{ t('nav.tagline') }}</p>
             </div>
         </div>
 
@@ -136,7 +136,7 @@ const whatsappHref = computed(() => whatsappLink(t('whatsapp.general')));
                         :href="whatsappHref"
                         target="_blank"
                         rel="noopener"
-                        class="group hidden items-center gap-2.5 rounded-full bg-brand-600 py-2.5 ps-4 pe-5 text-sm font-semibold text-white shadow-brand-glow transition-all duration-300 hover:bg-brand-500 hover:shadow-lg sm:inline-flex dark:bg-brand-500 dark:hover:bg-brand-400"
+                        class="group hidden items-center gap-2.5 rounded-full bg-brand-600 py-2.5 ps-4 pe-5 text-sm font-semibold text-white shadow-brand-glow transition-all duration-300 hover:bg-brand-700 hover:shadow-lg sm:inline-flex dark:bg-brand-600 dark:hover:bg-brand-700"
                     >
                         <svg class="h-[18px] w-[18px] transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.14-.14.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z" />
@@ -190,7 +190,7 @@ const whatsappHref = computed(() => whatsappLink(t('whatsapp.general')));
 
                         <a :href="telLink" class="block transition hover:text-brand-700 dark:hover:text-brand-400"><bdi dir="ltr">{{ company.phone_display }}</bdi></a>
                         <a :href="mailLink" class="block break-all transition hover:text-brand-700 dark:hover:text-brand-400">{{ company.email }}</a>
-                        <p class="text-stone-500 dark:text-obsidian-400">{{ company.address }}</p>
+                        <p class="text-stone-500 dark:text-obsidian-300">{{ company.address }}</p>
                         <a :href="whatsappHref" target="_blank" rel="noopener" class="btn-primary w-full">
                             {{ t('nav.whatsapp_long') }}
                         </a>

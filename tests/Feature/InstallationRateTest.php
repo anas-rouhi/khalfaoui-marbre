@@ -9,6 +9,8 @@ use App\Models\Devis;
 use App\Models\InstallationRate;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\InstallationRateSeeder;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -41,7 +43,7 @@ class InstallationRateTest extends TestCase
 
     public function test_le_seeder_pose_les_tarifs_de_reference(): void
     {
-        $this->seed(\Database\Seeders\InstallationRateSeeder::class);
+        $this->seed(InstallationRateSeeder::class);
 
         $this->assertSame(5, InstallationRate::count());
         $this->assertSame('220.00', InstallationRate::firstWhere('application', 'cuisine')->rate_per_m2);
@@ -49,11 +51,11 @@ class InstallationRateTest extends TestCase
 
     public function test_le_seeder_necrase_pas_un_tarif_ajuste(): void
     {
-        $this->seed(\Database\Seeders\InstallationRateSeeder::class);
+        $this->seed(InstallationRateSeeder::class);
 
         InstallationRate::firstWhere('application', 'cuisine')->update(['rate_per_m2' => 999]);
 
-        $this->seed(\Database\Seeders\InstallationRateSeeder::class);
+        $this->seed(InstallationRateSeeder::class);
 
         $this->assertSame(5, InstallationRate::count());
         $this->assertSame('999.00', InstallationRate::firstWhere('application', 'cuisine')->rate_per_m2);
@@ -147,7 +149,7 @@ class InstallationRateTest extends TestCase
     public function test_lecran_dadministration_est_accessible(): void
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
-        $this->seed(\Database\Seeders\InstallationRateSeeder::class);
+        $this->seed(InstallationRateSeeder::class);
 
         $this->get(InstallationRateResource::getUrl('index'))
             ->assertOk()
@@ -195,7 +197,7 @@ class InstallationRateTest extends TestCase
     {
         $this->rate('cuisine', 220);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         $this->rate('cuisine', 300);
     }
 }

@@ -129,7 +129,7 @@ onBeforeUnmount(() => (dragging.value = false));
             {{ beforeText }}
         </span>
         <span
-            class="pointer-events-none absolute right-4 top-4 rounded-full border border-brand-400/40 bg-brand-500/90 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-white backdrop-blur transition-opacity duration-300"
+            class="pointer-events-none absolute right-4 top-4 rounded-full border border-brand-400/40 bg-brand-600/90 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-white backdrop-blur transition-opacity duration-300"
             :class="position > 82 ? 'opacity-0' : 'opacity-100'"
         >
             {{ afterText }}

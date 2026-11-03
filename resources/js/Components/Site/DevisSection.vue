@@ -271,7 +271,7 @@ const submit = () => {
                         <!-- Étape 1 : le matériau -->
                         <div>
                             <legend class="mb-4 flex items-center gap-3 text-sm font-semibold text-stone-900 dark:text-white">
-                                <span class="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-[0.7rem] text-white dark:bg-brand-500">1</span>
+                                <span class="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-[0.7rem] text-white dark:bg-brand-600">1</span>
                                 {{ t('quote.step_material') }}
                             </legend>
 
@@ -289,7 +289,7 @@ const submit = () => {
                         <!-- Étape 2 : usage et surface -->
                         <div>
                             <legend class="mb-4 flex items-center gap-3 text-sm font-semibold text-stone-900 dark:text-white">
-                                <span class="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-[0.7rem] text-white dark:bg-brand-500">2</span>
+                                <span class="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-[0.7rem] text-white dark:bg-brand-600">2</span>
                                 {{ t('quote.step_surface') }}
                             </legend>
 
@@ -301,7 +301,7 @@ const submit = () => {
                                     class="rounded-full border px-4 py-2 text-xs font-medium transition"
                                     :class="
                                         form.application === app.key
-                                            ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-500'
+                                            ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-600'
                                             : 'chip'
                                     "
                                     @click="form.application = app.key"
@@ -335,7 +335,7 @@ const submit = () => {
                                         class="field w-32"
                                         :aria-label="t('quote.surface_exact_aria')"
                                     />
-                                    <span class="text-sm text-stone-500 dark:text-obsidian-400">{{ t('quote.surface_hint') }}</span>
+                                    <span class="text-sm text-stone-500 dark:text-obsidian-300">{{ t('quote.surface_hint') }}</span>
                                 </div>
                                 <p v-if="form.errors.surface_m2" class="mt-2 text-xs text-red-600 dark:text-red-400">{{ form.errors.surface_m2 }}</p>
                             </div>
@@ -344,7 +344,7 @@ const submit = () => {
                         <!-- Étape 3 : coordonnées -->
                         <div>
                             <legend class="mb-4 flex items-center gap-3 text-sm font-semibold text-stone-900 dark:text-white">
-                                <span class="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-[0.7rem] text-white dark:bg-brand-500">3</span>
+                                <span class="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-[0.7rem] text-white dark:bg-brand-600">3</span>
                                 {{ t('quote.step_contact') }}
                             </legend>
 
@@ -399,7 +399,7 @@ const submit = () => {
                              formulaire, mais soumis à la même validation. -->
                         <button
                             type="button"
-                            class="group flex w-full items-center justify-center gap-2.5 rounded-full border border-brand-600/40 bg-brand-500/10 py-4 text-sm font-semibold text-brand-700 transition-all duration-300 hover:border-brand-500 hover:bg-brand-600 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-60 dark:border-brand-500/40 dark:text-brand-300 dark:hover:border-brand-400 dark:hover:bg-brand-500 dark:focus-visible:ring-offset-obsidian-950"
+                            class="group flex w-full items-center justify-center gap-2.5 rounded-full border border-brand-600/40 bg-brand-500/10 py-4 text-sm font-semibold text-brand-700 transition-all duration-300 hover:border-brand-500 hover:bg-brand-600 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-60 dark:border-brand-500/40 dark:text-brand-300 dark:hover:border-brand-400 dark:hover:bg-brand-600 dark:focus-visible:ring-offset-obsidian-950"
                             :disabled="pdfLoading"
                             @click="downloadPdf"
                         >
@@ -416,7 +416,7 @@ const submit = () => {
 
                         <p v-if="pdfError" class="text-xs text-red-600 dark:text-red-400" role="alert">{{ pdfError }}</p>
 
-                        <p class="text-xs leading-relaxed text-stone-500 dark:text-obsidian-500">
+                        <p class="text-xs leading-relaxed text-stone-500 dark:text-obsidian-300">
                             {{ t('quote.required_note') }}
                         </p>
                     </fieldset>
@@ -433,31 +433,31 @@ const submit = () => {
 
                             <dl class="space-y-4 px-7 py-6 text-sm">
                                 <div class="flex items-start justify-between gap-4">
-                                    <dt class="text-stone-500 dark:text-obsidian-400">{{ t('quote.summary_material') }}</dt>
+                                    <dt class="text-stone-500 dark:text-obsidian-300">{{ t('quote.summary_material') }}</dt>
                                     <dd class="text-end font-medium text-stone-900 dark:text-white">
                                         {{ selectedProduct?.name ?? t('quote.summary_tbd') }}
                                     </dd>
                                 </div>
 
                                 <div class="flex items-center justify-between gap-4">
-                                    <dt class="text-stone-500 dark:text-obsidian-400">{{ t('quote.summary_application') }}</dt>
+                                    <dt class="text-stone-500 dark:text-obsidian-300">{{ t('quote.summary_application') }}</dt>
                                     <dd class="text-end font-medium text-stone-900 dark:text-white">
                                         {{ currentApplication ? applicationLabel(currentApplication) : '—' }}
                                     </dd>
                                 </div>
 
                                 <div class="flex items-center justify-between gap-4">
-                                    <dt class="text-stone-500 dark:text-obsidian-400">{{ t('quote.summary_surface') }}</dt>
+                                    <dt class="text-stone-500 dark:text-obsidian-300">{{ t('quote.summary_surface') }}</dt>
                                     <dd class="font-medium text-stone-900 dark:text-white">{{ surface }} {{ t('quote.unit') }}</dd>
                                 </div>
 
                                 <div v-if="canEstimate" class="space-y-3 border-t border-stone-200 pt-4 dark:border-white/10">
                                     <div class="flex items-center justify-between gap-4">
-                                        <dt class="text-stone-500 dark:text-obsidian-400">{{ t('quote.summary_supply') }}</dt>
+                                        <dt class="text-stone-500 dark:text-obsidian-300">{{ t('quote.summary_supply') }}</dt>
                                         <dd class="text-stone-900 dark:text-white">{{ formatMAD(materialCost) }} {{ t('quote.currency') }}</dd>
                                     </div>
                                     <div class="flex items-center justify-between gap-4">
-                                        <dt class="text-stone-500 dark:text-obsidian-400">{{ t('quote.summary_install') }}</dt>
+                                        <dt class="text-stone-500 dark:text-obsidian-300">{{ t('quote.summary_install') }}</dt>
                                         <dd class="text-stone-900 dark:text-white">{{ formatMAD(poseCost) }} {{ t('quote.currency') }}</dd>
                                     </div>
                                 </div>
@@ -465,17 +465,17 @@ const submit = () => {
 
                             <div class="border-t border-stone-200 bg-stone-50/80 px-7 py-6 dark:border-white/10 dark:bg-obsidian-950/50">
                                 <template v-if="canEstimate">
-                                    <p class="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-obsidian-400">{{ t('quote.summary_total') }}</p>
+                                    <p class="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-obsidian-300">{{ t('quote.summary_total') }}</p>
                                     <p class="mt-2 font-display text-4xl font-light text-brand-700 dark:text-brand-300">
                                         {{ formatMAD(total) }}
-                                        <span class="font-sans text-base text-stone-500 dark:text-obsidian-400">{{ t('quote.currency') }}</span>
+                                        <span class="font-sans text-base text-stone-500 dark:text-obsidian-300">{{ t('quote.currency') }}</span>
                                     </p>
-                                    <p class="mt-3 text-xs leading-relaxed text-stone-500 dark:text-obsidian-500">
+                                    <p class="mt-3 text-xs leading-relaxed text-stone-500 dark:text-obsidian-300">
                                         {{ t('quote.summary_disclaimer') }}
                                     </p>
                                 </template>
                                 <template v-else>
-                                    <p class="text-sm leading-relaxed text-stone-600 dark:text-obsidian-400">
+                                    <p class="text-sm leading-relaxed text-stone-600 dark:text-obsidian-300">
                                         {{ t('quote.summary_empty') }}
                                     </p>
                                 </template>

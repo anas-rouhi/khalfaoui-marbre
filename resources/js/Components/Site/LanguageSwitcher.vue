@@ -22,7 +22,7 @@ const { t, locale, available, switchLocale } = useI18n();
             class="relative rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
             :class="[
                 item.code === locale
-                    ? 'bg-brand-600 text-white shadow-brand-glow dark:bg-brand-500'
+                    ? 'bg-brand-600 text-white shadow-brand-glow dark:bg-brand-600'
                     : 'text-stone-600 hover:text-stone-900 dark:text-obsidian-300 dark:hover:text-white',
                 variant === 'full' ? 'flex-1 py-2.5 text-sm' : '',
             ]"

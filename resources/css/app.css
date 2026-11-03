@@ -118,7 +118,7 @@
     }
 
     .btn-primary {
-        @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-brand-500 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 active:scale-[0.98] dark:bg-brand-500 dark:hover:bg-brand-400 dark:focus-visible:ring-offset-obsidian-950;
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-brand-700 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 active:scale-[0.98] dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus-visible:ring-offset-obsidian-950;
     }
 
     .btn-ghost {

@@ -162,7 +162,7 @@ const formatPrice = (value) =>
                     </p>
                 </div>
 
-                <p class="shrink-0 text-sm text-stone-500 dark:text-obsidian-400">
+                <p class="shrink-0 text-sm text-stone-500 dark:text-obsidian-300">
                     <span class="font-display text-4xl font-light text-stone-900 dark:text-white">{{ filtered.length }}</span>
                     <span class="ms-2">{{ filtered.length > 1 ? t('catalogue.count_many') : t('catalogue.count_one') }}</span>
                 </p>
@@ -171,7 +171,7 @@ const formatPrice = (value) =>
             <!-- Filtres -->
             <div class="mt-14 space-y-6" data-reveal data-reveal-delay="100">
                 <div v-if="applicationOptions.length" class="flex flex-wrap items-center gap-2.5">
-                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-500">{{ t('catalogue.filter_usage') }}</span>
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-300">{{ t('catalogue.filter_usage') }}</span>
                     <button
                         v-for="app in applicationFilters"
                         :key="app.key"
@@ -179,7 +179,7 @@ const formatPrice = (value) =>
                         class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                         :class="
                             activeApplication === app.key
-                                ? 'border-brand-500 bg-brand-600 text-white shadow-brand-glow dark:border-brand-400 dark:bg-brand-500'
+                                ? 'border-brand-500 bg-brand-600 text-white shadow-brand-glow dark:border-brand-400 dark:bg-brand-600'
                                 : 'chip'
                         "
                         :aria-pressed="activeApplication === app.key"
@@ -190,7 +190,7 @@ const formatPrice = (value) =>
                 </div>
 
                 <div v-if="colorOptions.length" class="flex flex-wrap items-center gap-2.5">
-                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-500">{{ t('catalogue.filter_colour') }}</span>
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-300">{{ t('catalogue.filter_colour') }}</span>
                     <button
                         v-for="color in colorFilters"
                         :key="color.key"
@@ -214,7 +214,7 @@ const formatPrice = (value) =>
                 </div>
 
                 <div v-if="familyOptions.length" class="flex flex-wrap items-center gap-2.5">
-                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-500">{{ t('catalogue.filter_family') }}</span>
+                    <span class="me-2 hidden text-xs uppercase tracking-[0.2em] text-stone-500 sm:inline dark:text-obsidian-300">{{ t('catalogue.filter_family') }}</span>
                     <button
                         v-for="family in familyFilters"
                         :key="family.key"
@@ -262,7 +262,7 @@ const formatPrice = (value) =>
                         />
                         <div
                             v-else
-                            class="grid h-full w-full place-items-center bg-gradient-to-br from-stone-200 to-stone-300 text-xs uppercase tracking-[0.2em] text-stone-500 dark:from-obsidian-700 dark:to-obsidian-900 dark:text-obsidian-500"
+                            class="grid h-full w-full place-items-center bg-gradient-to-br from-stone-200 to-stone-300 text-xs uppercase tracking-[0.2em] text-stone-500 dark:from-obsidian-700 dark:to-obsidian-900 dark:text-obsidian-300"
                         >
                             {{ t('catalogue.photo_soon') }}
                         </div>
@@ -281,7 +281,7 @@ const formatPrice = (value) =>
                         <h3 class="font-display text-xl font-medium text-stone-900 dark:text-white">{{ product.name }}</h3>
                         <p class="mt-1 text-sm text-brand-700 dark:text-brand-400">{{ product.color }}</p>
 
-                        <p v-if="product.description" class="mt-3 line-clamp-2 text-sm leading-relaxed text-stone-600 dark:text-obsidian-400">
+                        <p v-if="product.description" class="mt-3 line-clamp-2 text-sm leading-relaxed text-stone-600 dark:text-obsidian-300">
                             {{ product.description }}
                         </p>
 
@@ -299,10 +299,10 @@ const formatPrice = (value) =>
                             <div>
                                 <p v-if="product.pricePerM2" class="font-display text-lg text-stone-900 dark:text-white">
                                     {{ formatPrice(product.pricePerM2) }}
-                                    <span class="text-xs font-sans text-stone-500 dark:text-obsidian-400">{{ t('catalogue.per_m2') }}</span>
+                                    <span class="text-xs font-sans text-stone-500 dark:text-obsidian-300">{{ t('catalogue.per_m2') }}</span>
                                 </p>
-                                <p v-else class="text-sm text-stone-500 dark:text-obsidian-400">{{ t('catalogue.price_on_request') }}</p>
-                                <p v-if="product.origin" class="mt-0.5 text-[0.68rem] uppercase tracking-[0.14em] text-stone-500 dark:text-obsidian-500">
+                                <p v-else class="text-sm text-stone-500 dark:text-obsidian-300">{{ t('catalogue.price_on_request') }}</p>
+                                <p v-if="product.origin" class="mt-0.5 text-[0.68rem] uppercase tracking-[0.14em] text-stone-500 dark:text-obsidian-300">
                                     {{ t('catalogue.origin') }} {{ product.origin }}
                                 </p>
                                 <!-- Badge de référence (KM-xxx), à citer au téléphone. -->
@@ -319,7 +319,7 @@ const formatPrice = (value) =>
                                     :href="productWhatsappLink(product)"
                                     target="_blank"
                                     rel="noopener"
-                                    class="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white transition hover:bg-brand-500 hover:shadow-brand-glow dark:bg-brand-500 dark:hover:bg-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+                                    class="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white transition hover:bg-brand-700 hover:shadow-brand-glow dark:bg-brand-600 dark:hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
                                     :aria-label="`${t('catalogue.whatsapp')} — ${product.name}`"
                                     :title="t('catalogue.whatsapp')"
                                 >
@@ -330,7 +330,7 @@ const formatPrice = (value) =>
 
                                 <button
                                     type="button"
-                                    class="rounded-full border border-brand-600/40 px-4 py-2 text-xs font-semibold text-brand-700 transition hover:bg-brand-600 hover:text-white dark:border-brand-500/40 dark:text-brand-300 dark:hover:bg-brand-500"
+                                    class="rounded-full border border-brand-600/40 px-4 py-2 text-xs font-semibold text-brand-700 transition hover:bg-brand-600 hover:text-white dark:border-brand-500/40 dark:text-brand-300 dark:hover:bg-brand-600"
                                     @click="emit('request-quote', product)"
                                 >
                                     {{ t('catalogue.quote') }}
@@ -357,7 +357,7 @@ const formatPrice = (value) =>
                 </div>
             </div>
 
-            <p class="mt-14 text-center text-sm text-stone-500 dark:text-obsidian-400" data-reveal>
+            <p class="mt-14 text-center text-sm text-stone-500 dark:text-obsidian-300" data-reveal>
                 {{ t('catalogue.not_found') }}
                 <a
                     :href="whatsappLink(t('whatsapp.not_found'))"

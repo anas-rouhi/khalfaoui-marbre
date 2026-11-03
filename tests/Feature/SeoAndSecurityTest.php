@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Support\MediaPath;
+use App\Support\Seo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -77,6 +78,21 @@ class SeoAndSecurityTest extends TestCase
         $this->assertSame('Casablanca', $schema['address']['addressLocality']);
         $this->assertSame(config('company.geo.lat'), $schema['geo']['latitude']);
         $this->assertCount(2, $schema['openingHoursSpecification']);
+
+        // Logo matriciel et réellement livré : Google refuse le SVG.
+        $this->assertSame(asset(Seo::SCHEMA_LOGO), $schema['logo']);
+        $this->assertFileExists(public_path(Seo::SCHEMA_LOGO));
+        $this->assertStringStartsWith('https://www.google.com/maps/', $schema['hasMap']);
+    }
+
+    public function test_la_meta_description_tient_dans_lextrait_google(): void
+    {
+        foreach (array_keys(config('localization.supported')) as $locale) {
+            $length = mb_strlen(trans('seo.description', [], $locale));
+
+            $this->assertLessThanOrEqual(155, $length, "Description « {$locale} » tronquée par Google.");
+            $this->assertGreaterThanOrEqual(110, $length, "Description « {$locale} » trop courte.");
+        }
     }
 
     public function test_lurl_arabe_affiche_la_version_arabe(): void

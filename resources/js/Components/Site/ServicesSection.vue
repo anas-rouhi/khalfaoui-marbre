@@ -35,14 +35,14 @@ const services = [
                     data-reveal
                     :data-reveal-delay="index * 70"
                 >
-                    <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-500/10 text-brand-700 ring-1 ring-inset ring-brand-600/10 transition-all duration-500 group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-500/15 dark:text-brand-400 dark:ring-champagne-300/10 dark:group-hover:bg-brand-500">
+                    <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-500/10 text-brand-700 ring-1 ring-inset ring-brand-600/10 transition-all duration-500 group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-500/15 dark:text-brand-400 dark:ring-champagne-300/10 dark:group-hover:bg-brand-600">
                         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                             <path :d="service.icon" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </span>
 
                     <h3 class="mt-6 font-display text-xl font-medium text-stone-900 dark:text-white">{{ t(`services.${service.key}.title`) }}</h3>
-                    <p class="mt-3 text-sm leading-relaxed text-stone-600 dark:text-obsidian-400">{{ t(`services.${service.key}.text`) }}</p>
+                    <p class="mt-3 text-sm leading-relaxed text-stone-600 dark:text-obsidian-300">{{ t(`services.${service.key}.text`) }}</p>
                 </article>
             </div>
         </div>

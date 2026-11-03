@@ -15,6 +15,13 @@ class Seo
     public const SHARE_IMAGE_HEIGHT = 1280;
 
     /**
+     * Logo des données structurées : Google exige un format matriciel et
+     * l'affiche sur fond blanc. L'emblème carré (disque sombre) y reste
+     * lisible, contrairement à la signature au lettrage blanc.
+     */
+    public const SCHEMA_LOGO = 'images/brand/khalfaoui-marbre-mark.png';
+
+    /**
      * URL de la page d'accueil dans chaque langue (hreflang).
      *
      * @return array<string, string>
@@ -62,7 +69,7 @@ class Seo
             'legalName' => $company['legal_name'],
             'description' => __('seo.description'),
             'url' => static::alternates()['x-default'],
-            'logo' => asset(ltrim($company['logo'], '/')),
+            'logo' => asset(self::SCHEMA_LOGO),
             'image' => asset(self::SHARE_IMAGE),
             'telephone' => $company['phone_e164'],
             'email' => $company['email'],
@@ -80,6 +87,9 @@ class Seo
                 'latitude' => $company['geo']['lat'],
                 'longitude' => $company['geo']['lng'],
             ],
+            // Même requête que la carte et l'itinéraire du site (useCompany.js).
+            'hasMap' => 'https://www.google.com/maps/search/?api=1&query='
+                .rawurlencode($company['legal_name'].', '.$company['address']),
             'areaServed' => ['@type' => 'City', 'name' => 'Casablanca'],
             'openingHoursSpecification' => collect($company['opening_hours'] ?? [])
                 ->map(fn (array $slot) => [

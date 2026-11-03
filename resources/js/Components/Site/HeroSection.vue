@@ -91,7 +91,7 @@ const stats = [
                 <div class="mt-11 flex animate-fade-up flex-col gap-4 delay-400ms sm:flex-row sm:items-center">
                     <a href="#devis" class="btn-primary group px-9 py-4 text-base">
                         {{ t('hero.cta_quote') }}
-                        <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
@@ -107,7 +107,7 @@ const stats = [
                         <dt class="sr-only">{{ t(stat.key) }}</dt>
                         <dd>
                             <span class="block font-display text-3xl font-light text-champagne-700 sm:text-4xl dark:text-brand-400"><bdi dir="ltr">{{ stat.value }}</bdi></span>
-                            <span class="mt-1.5 block text-[0.7rem] uppercase tracking-[0.18em] text-stone-600 dark:text-obsidian-400">{{ t(stat.key) }}</span>
+                            <span class="mt-1.5 block text-[0.7rem] uppercase tracking-[0.18em] text-stone-600 dark:text-obsidian-300">{{ t(stat.key) }}</span>
                         </dd>
                     </div>
                 </dl>
@@ -117,7 +117,7 @@ const stats = [
         <!-- Repère de défilement -->
         <a
             href="#catalogue"
-            class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 animate-fade-in flex-col items-center gap-2 text-stone-500 transition hover:text-brand-700 delay-700ms md:flex dark:text-obsidian-400 dark:hover:text-brand-400"
+            class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 animate-fade-in flex-col items-center gap-2 text-stone-500 transition hover:text-brand-700 delay-700ms md:flex dark:text-obsidian-300 dark:hover:text-brand-400"
             :aria-label="t('hero.scroll_aria')"
         >
             <span class="text-[0.65rem] uppercase tracking-[0.35em]">{{ t('hero.scroll') }}</span>
@@ -131,7 +131,7 @@ const stats = [
             :href="whatsappLink(t('whatsapp.quote'))"
             target="_blank"
             rel="noopener"
-            class="absolute bottom-6 end-6 grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-white shadow-brand-glow transition hover:scale-105 hover:bg-brand-500 sm:hidden dark:bg-brand-500 dark:hover:bg-brand-400"
+            class="absolute bottom-6 end-6 grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-white shadow-brand-glow transition hover:scale-105 hover:bg-brand-700 sm:hidden dark:bg-brand-600 dark:hover:bg-brand-700"
             :aria-label="t('hero.whatsapp_aria')"
         >
             <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

@@ -1,6 +1,6 @@
 {
     "seo.title": "Marbre & Granit à Casablanca",
-    "seo.description": "KHALFAOUI MARBRE S.A.R.L — Vente et pose de marbre et granit à Casablanca. Plans de travail, sols, escaliers, salles de bain et façades. Route 1033 Lahraouiyine.",
+    "seo.description": "Marbre et granit à Casablanca : vente, découpe et pose sur mesure de plans de travail, sols, escaliers et façades. Devis en ligne, rappel sous 24h.",
     "locale.switch": "Changer de langue",
     "locale.current": "Langue actuelle",
 
@@ -196,8 +196,8 @@
     "whatsapp.quote": "Bonjour, je souhaite un devis pour du marbre.",
     "whatsapp.advice": "Bonjour, je cherche une pierre particulière. Pouvez-vous me conseiller ?",
     "whatsapp.not_found": "Bonjour, je recherche une pierre qui ne figure pas au catalogue.",
-    "whatsapp.product": "Bonjour, je suis intéressé(e) par le marbre :name (Réf : :reference) vu sur votre site. Est-il disponible ?",
-    "whatsapp.product_no_ref": "Bonjour, je suis intéressé(e) par le marbre :name vu sur votre site. Est-il disponible ?",
+    "whatsapp.product": "Bonjour, je suis intéressé(e) par :name (Réf : :reference) vu sur votre site. Est-il disponible ?",
+    "whatsapp.product_no_ref": "Bonjour, je suis intéressé(e) par :name vu sur votre site. Est-il disponible ?",
     "whatsapp.visit": "Bonjour, je souhaite visiter votre dépôt à Lahraouiyine.",
     "whatsapp.order_intro": "Bonjour :company, je souhaite un devis :",
     "whatsapp.order_material": "Matériau",

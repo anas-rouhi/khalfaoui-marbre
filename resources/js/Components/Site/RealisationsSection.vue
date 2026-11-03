@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
                         class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                         :class="
                             activeCategory === category.value
-                                ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-500'
+                                ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-600'
                                 : 'chip'
                         "
                         :aria-pressed="activeCategory === category.value"
@@ -232,7 +232,7 @@ onBeforeUnmount(() => {
 
                         <span class="mt-3 inline-flex translate-y-2 items-center gap-2 text-xs font-semibold text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
                             {{ t('projects.view') }}
-                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <svg class="h-3.5 w-3.5 rtl:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </span>
@@ -265,7 +265,7 @@ onBeforeUnmount(() => {
                             class="rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300"
                             :class="
                                 index === comparedIndex
-                                    ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-500'
+                                    ? 'border-brand-500 bg-brand-600 text-white dark:border-brand-400 dark:bg-brand-600'
                                     : 'chip'
                             "
                             :aria-pressed="index === comparedIndex"
@@ -285,7 +285,7 @@ onBeforeUnmount(() => {
                         :after-caption="compared.title"
                     />
 
-                    <p class="mt-5 text-sm text-stone-500 dark:text-obsidian-400">
+                    <p class="mt-5 text-sm text-stone-500 dark:text-obsidian-300">
                         <span class="text-stone-900 dark:text-white">{{ compared.title }}</span>
                         <span v-if="compared.location"> — {{ compared.location }}</span>
                     </p>
