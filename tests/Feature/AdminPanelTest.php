@@ -114,6 +114,36 @@ class AdminPanelTest extends TestCase
         );
     }
 
+    public function test_la_reference_produit_est_partagee_au_catalogue(): void
+    {
+        $product = Product::create(['name' => 'Travertin', 'slug' => 'travertin']);
+
+        $this->assertSame(sprintf('KM-%03d', $product->id), $product->reference);
+
+        // Citée dans le message WhatsApp de la carte du catalogue.
+        $this->get('/')->assertInertia(
+            fn ($page) => $page->where('products.0.reference', $product->reference)
+        );
+    }
+
+    public function test_les_montants_du_tableau_des_devis_restent_lisibles_en_arabe(): void
+    {
+        $this->actingAs($this->admin());
+
+        Devis::forceCreate([
+            'client_name' => 'Youssef',
+            'phone' => '0661219409',
+            'surface_m2' => 1250,
+            'estimated_total' => 245000,
+            'status' => 'pending',
+        ]);
+
+        // Espace fine insécable : une espace simple ferait lire « 250 1 » en RTL.
+        Livewire::test(ListDevis::class)
+            ->assertSee("1\u{202F}250")
+            ->assertSee("245\u{202F}000");
+    }
+
     public function test_une_realisation_peut_etre_creee(): void
     {
         Storage::fake('public');

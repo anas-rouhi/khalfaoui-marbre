@@ -6,7 +6,10 @@ use App\Models\Category;
 use App\Models\Devis;
 use App\Models\InstallationRate;
 use App\Models\Product;
+use App\Support\PdfText;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class DevisPdfTest extends TestCase
@@ -173,6 +176,72 @@ class DevisPdfTest extends TestCase
 
         $response->assertOk();
         $this->assertStringContainsString('DejaVuSans', $response->getContent());
+    }
+
+    /** Chaque page du PDF est un objet « /Type /Page » (« /Pages » exclu). */
+    private function pageCount(string $pdf): int
+    {
+        return preg_match_all('#/Type\s*/Page\b#', $pdf);
+    }
+
+    /**
+     * HTML du gabarit tel que dompdf l'a reçu : le texte du PDF lui-même est
+     * compressé, donc illisible pour une assertion.
+     */
+    private function renderedPdfHtml(array $overrides = []): string
+    {
+        $captured = null;
+        View::composer('pdf.devis', function ($view) use (&$captured) {
+            $captured ??= $view;
+        });
+
+        $this->post('/devis/pdf', $this->payload($overrides))->assertOk();
+
+        return $captured->render();
+    }
+
+    public static function langues(): array
+    {
+        return ['français' => ['fr'], 'arabe' => ['ar']];
+    }
+
+    #[DataProvider('langues')]
+    public function test_le_devis_tient_sur_une_seule_page(string $locale): void
+    {
+        $product = $this->product();
+        $this->get("/langue/{$locale}");
+
+        $response = $this->post('/devis/pdf', $this->payload([
+            'product_id' => $product->id,
+            // Précisions d'une longueur réaliste.
+            'message' => 'Plan de travail en L avec retour de 1,20 m, évier sous-plan, crédence assortie de 60 cm et chants polis. Pose souhaitée avant la fin du mois si possible.',
+        ]));
+
+        $response->assertOk();
+        $this->assertSame(1, $this->pageCount($response->getContent()));
+    }
+
+    public function test_le_devis_rappelle_les_conseils_dentretien(): void
+    {
+        $html = $this->renderedPdfHtml(['product_id' => $this->product()->id]);
+
+        $this->assertStringContainsString(e(__('pdf.care_title')), $html);
+
+        foreach (__('pdf.care_tips') as $tip) {
+            $this->assertStringContainsString(e($tip), $html);
+        }
+    }
+
+    public function test_les_conseils_dentretien_sont_traduits_en_arabe(): void
+    {
+        $this->get('/langue/ar');
+
+        $html = $this->renderedPdfHtml(['product_id' => $this->product()->id]);
+
+        // Texte arabe mis en forme pour dompdf (lettres liées, ordre visuel).
+        $this->assertStringContainsString(e(PdfText::shape(__('pdf.care_title'))), $html);
+        $this->assertNotSame(trans('pdf.care_title', [], 'fr'), __('pdf.care_title'));
+        $this->assertCount(count(trans('pdf.care_tips', [], 'fr')), __('pdf.care_tips'));
     }
 
     public function test_un_devis_francais_sans_arabe_garde_la_police_legere(): void

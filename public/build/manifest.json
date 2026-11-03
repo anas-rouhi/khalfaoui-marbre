@@ -1,6 +1,6 @@
 {
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-DlC88BRf.js",
+    "file": "assets/Home-DIJuQlEA.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
@@ -9,7 +9,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DRESk_g7.js",
+    "file": "assets/app-C-4uWPyq.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -17,7 +17,7 @@
       "resources/js/Pages/Home.vue"
     ],
     "css": [
-      "assets/app-D4uYAixE.css"
+      "assets/app-BIFBAyfO.css"
     ]
   }
 }

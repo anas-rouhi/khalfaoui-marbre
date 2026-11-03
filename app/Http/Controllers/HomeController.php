@@ -76,6 +76,7 @@ class HomeController extends Controller
                 'id' => $product->id,
                 'name' => $product->translated('name'),
                 'slug' => $product->slug,
+                'reference' => $product->reference,
                 'category' => $product->category?->translated('name'),
                 // Clé du filtre « Famille » (slug de la catégorie).
                 'categoryKey' => $product->category?->slug,

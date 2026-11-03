@@ -43,7 +43,9 @@
     <meta charset="utf-8">
     <title>{{ $devis->reference }}</title>
     <style>
-        @page { margin: 0; }
+        /* Marge basse = hauteur du pied de page fixe : le contenu passe à la
+           page suivante au lieu de glisser sous le bandeau. */
+        @page { margin: 0 0 36px 0; }
         body {
             margin: 0;
             font-family: {!! $font !!};
@@ -101,9 +103,25 @@
         .total-label { color: #9fa2a9; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; }
         .terms { font-size: 8.5px; color: #6b7076; line-height: 1.65; }
         .terms li { margin-bottom: 3px; }
+        .care {
+            background: #faf7f0;
+            border: 1px solid #eadfc8;
+            border-radius: 6px;
+            padding: 9px 16px;
+        }
+        .care .terms { color: #4b4f55; }
+        .care-note {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #eadfc8;
+            font-size: 8px;
+            font-style: italic;
+            color: #8a6a2f;
+        }
         .footer {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
+            bottom: -36px; left: 0; right: 0;
+            height: 12px;
             background: #0d1714;
             color: #c5c7cb;
             padding: 12px 38px;
@@ -113,6 +131,11 @@
             /* L'espacement des lettres casserait la liaison des caractères arabes. */
             .label, h1, .card h2, .items th, .total-label { letter-spacing: 0; }
             .label, .card h2, .items th { font-size: 9px; }
+            /* L'italique n'a pas d'équivalent en typographie arabe. */
+            .care-note { font-style: normal; }
+            /* DejaVu Sans monte plus haut qu'Helvetica : interlignage resserré
+               pour que le devis arabe tienne, lui aussi, sur une page. */
+            .terms { line-height: 1.45; }
         @endif
     </style>
 </head>
@@ -266,14 +289,14 @@
     @endif
 
     {{-- ══ Conditions ══ --}}
-    <div class="start" style="margin-top: 22px;">
+    <div class="start" style="margin-top: 18px;">
         <div class="label" style="color:#8b9096;">{{ $tx(__('pdf.conditions')) }}</div>
         @if ($rtl)
             {{-- Pas de puces HTML : dompdf les placerait à gauche. --}}
             <div class="terms" style="margin-top: 7px;">
                 @foreach (__('pdf.terms') as $term)
                     @php $termLines = explode("\n", $tx($term, 110)); $termLines[0] .= ' •'; @endphp
-                    <div style="margin-bottom: 3px;">{!! implode('<br>', array_map('e', $termLines)) !!}</div>
+                    <div style="margin-bottom: 2px;">{!! implode('<br>', array_map('e', $termLines)) !!}</div>
                 @endforeach
             </div>
         @else
@@ -286,7 +309,7 @@
     </div>
 
     {{-- ══ Appel à l'action ══ --}}
-    <div style="margin-top: 20px; border: 1px solid {{ $green }}; border-radius: 6px; padding: 14px 18px;">
+    <div style="margin-top: 16px; border: 1px solid {{ $green }}; border-radius: 6px; padding: 12px 18px;">
         <x-pdf.row :rtl="$rtl" end-style="text-align: {{ $end }}; line-height:1.7;">
             <x-slot:start>
                 <strong style="font-size:12px;">{{ $tx(__('pdf.next_step')) }}</strong><br>
@@ -297,6 +320,26 @@
                 <span class="muted" style="font-size:9px;">{{ $company['email'] }}</span>
             </x-slot:end>
         </x-pdf.row>
+    </div>
+
+    {{-- ══ Entretien : les bons gestes, et la limite de responsabilité ══ --}}
+    <div class="care start" style="margin-top: 12px;">
+        <div class="label" style="color:#b98a3c;">{{ $tx(__('pdf.care_title')) }}</div>
+        @if ($rtl)
+            <div class="terms" style="margin-top: 6px;">
+                @foreach (__('pdf.care_tips') as $tip)
+                    @php $tipLines = explode("\n", $tx($tip, 105)); $tipLines[0] .= ' •'; @endphp
+                    <div style="margin-bottom: 2px;">{!! implode('<br>', array_map('e', $tipLines)) !!}</div>
+                @endforeach
+            </div>
+        @else
+            <ul class="terms" style="margin: 6px 0 0; padding-left: 15px;">
+                @foreach (__('pdf.care_tips') as $tip)
+                    <li style="margin-bottom: 2px;">{{ $tip }}</li>
+                @endforeach
+            </ul>
+        @endif
+        <div class="care-note">{!! $lines(__('pdf.care_note'), 105) !!}</div>
     </div>
 </div>
 

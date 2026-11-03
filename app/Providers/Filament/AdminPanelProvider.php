@@ -13,7 +13,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -52,6 +51,8 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'success' => Color::Emerald,
                 'info' => Color::Blue,
+                // Or « pierre » des accents du tableau de bord.
+                'gold' => Color::hex('#b98a3c'),
             ])
             // Libellés évalués à l'affichage (closures) : la configuration du
             // panneau est lue au démarrage, avant que SetAdminLocale n'ait
@@ -72,10 +73,10 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            // Tableau de bord : bannière, indicateurs, graphique et dernières
+            // demandes (app/Filament/Widgets). La bannière remplace le widget
+            // « Compte » de Filament ; la déconnexion reste dans le menu.
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

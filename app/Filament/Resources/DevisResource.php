@@ -50,6 +50,13 @@ class DevisResource extends Resource
         return __('Demandes de devis');
     }
 
+    /**
+     * Séparateur des milliers : espace fine insécable (U+202F). Une espace
+     * ordinaire couperait le nombre en deux, que l'arabe (RTL) afficherait
+     * à l'envers (« 234 1 »).
+     */
+    public const THOUSANDS = "\u{202F}";
+
     public const STATUSES = [
         'pending' => 'À rappeler',
         'contacted' => 'Contacté',
@@ -195,13 +202,13 @@ class DevisResource extends Resource
 
                 Tables\Columns\TextColumn::make('surface_m2')
                     ->label(__('Surface'))
-                    ->numeric(decimalPlaces: 1, thousandsSeparator: ' ')
+                    ->numeric(decimalPlaces: 1, thousandsSeparator: self::THOUSANDS)
                     ->suffix(__(' m²'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('estimated_total')
                     ->label(__('Estimation'))
-                    ->numeric(decimalPlaces: 0, thousandsSeparator: ' ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: self::THOUSANDS)
                     ->suffix(__(' DH'))
                     ->placeholder(__('—'))
                     ->sortable(),
@@ -235,7 +242,7 @@ class DevisResource extends Resource
                     ->label(__('Appeler'))
                     ->icon('heroicon-o-phone')
                     ->color('gray')
-                    ->url(fn (Devis $record) => 'tel:'.self::normalisePhone($record->phone)),
+                    ->url(fn (Devis $record) => self::telUrl($record)),
 
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()->label(__('Ouvrir la fiche')),
@@ -291,6 +298,12 @@ class DevisResource extends Resource
         }
 
         return $digits;
+    }
+
+    /** Lien d'appel ; le « + » évite que 212… soit composé comme un numéro local. */
+    public static function telUrl(Devis $record): string
+    {
+        return 'tel:+'.self::normalisePhone($record->phone);
     }
 
     /** Lien wa.me avec un message de rappel déjà rédigé. */

@@ -129,6 +129,15 @@ const resetFilters = () => {
 const applicationLabel = (key) =>
     applicationOptions.value.find((option) => option.key === key)?.label ?? key;
 
+// Demande de disponibilité pré-remplie. Les fiches de démonstration n'ont
+// pas de référence : le message s'en passe.
+const productWhatsappLink = (product) =>
+    whatsappLink(
+        product.reference
+            ? t('whatsapp.product', { name: product.name, reference: product.reference })
+            : t('whatsapp.product_no_ref', { name: product.name }),
+    );
+
 // Même format dans les deux langues : chiffres occidentaux et espace comme
 // séparateur de milliers. Le point serait lu comme une virgule décimale.
 const formatPrice = (value) =>
@@ -296,15 +305,33 @@ const formatPrice = (value) =>
                                 <p v-if="product.origin" class="mt-0.5 text-[0.68rem] uppercase tracking-[0.14em] text-obsidian-500">
                                     {{ t('catalogue.origin') }} {{ product.origin }}
                                 </p>
+                                <p v-if="product.reference" class="mt-0.5 text-[0.68rem] tracking-[0.14em] text-obsidian-500">
+                                    {{ t('catalogue.reference') }} <span dir="ltr">{{ product.reference }}</span>
+                                </p>
                             </div>
 
-                            <button
-                                type="button"
-                                class="shrink-0 rounded-full border border-brand-500/40 px-4 py-2 text-xs font-semibold text-brand-300 transition hover:bg-brand-500 hover:text-white"
-                                @click="emit('request-quote', product)"
-                            >
-                                {{ t('catalogue.quote') }}
-                            </button>
+                            <div class="flex shrink-0 items-center gap-2">
+                                <a
+                                    :href="productWhatsappLink(product)"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="grid h-9 w-9 place-items-center rounded-full bg-brand-500 text-white transition hover:bg-brand-400 hover:shadow-brand-glow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
+                                    :aria-label="`${t('catalogue.whatsapp')} — ${product.name}`"
+                                    :title="t('catalogue.whatsapp')"
+                                >
+                                    <svg class="h-[1.1rem] w-[1.1rem]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.33 4.97L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91a9.85 9.85 0 0 0-9.91-9.93Zm5.43 12.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.14-.14.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z" />
+                                    </svg>
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="rounded-full border border-brand-500/40 px-4 py-2 text-xs font-semibold text-brand-300 transition hover:bg-brand-500 hover:text-white"
+                                    @click="emit('request-quote', product)"
+                                >
+                                    {{ t('catalogue.quote') }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </article>

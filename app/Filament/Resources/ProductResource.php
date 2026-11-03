@@ -218,6 +218,13 @@ class ProductResource extends Resource
                     ->weight('medium')
                     ->description(fn (Product $record) => $record->color),
 
+                // Référence citée par les clients dans leurs messages WhatsApp.
+                Tables\Columns\TextColumn::make('reference')
+                    ->label(__('Réf.'))
+                    ->fontFamily('mono')
+                    ->color('gray')
+                    ->sortable(query: fn (Builder $query, string $direction) => $query->orderBy('id', $direction)),
+
                 Tables\Columns\TextColumn::make('category.name')
                     ->label(__('Famille'))
                     ->badge()
@@ -230,7 +237,7 @@ class ProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('price_per_m2')
                     ->label(__('Prix / m²'))
-                    ->numeric(decimalPlaces: 0, thousandsSeparator: ' ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: DevisResource::THOUSANDS)
                     ->suffix(__(' DH'))
                     ->placeholder(__('Sur demande'))
                     ->sortable(),

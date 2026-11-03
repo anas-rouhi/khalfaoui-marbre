@@ -39,4 +39,14 @@ class Product extends Model
     {
         return $this->hasOne(ProductImage::class)->where('is_main', true);
     }
+
+    /**
+     * Référence courte affichée sur le catalogue et citée dans les messages
+     * WhatsApp, ex. « KM-012 ». Tirée de l'identifiant : elle ne change pas
+     * quand la fiche est renommée.
+     */
+    public function getReferenceAttribute(): string
+    {
+        return sprintf('KM-%03d', $this->getKey() ?? 0);
+    }
 }

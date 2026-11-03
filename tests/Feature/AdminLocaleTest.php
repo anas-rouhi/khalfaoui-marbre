@@ -162,20 +162,20 @@ class AdminLocaleTest extends TestCase
     }
 
     /**
-     * Clés littérales passées à __() dans le code du back-office.
+     * Clés littérales passées à __() et trans_choice() dans le code du
+     * back-office.
      *
      * @return array<int, string>
      */
     private function adminTranslationKeys(): array
     {
-        $files = array_merge(
-            glob(app_path('Providers/Filament/*.php')),
-            glob(resource_path('views/filament/*.blade.php')),
-        );
+        $files = glob(app_path('Providers/Filament/*.php'));
 
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(app_path('Filament'))) as $file) {
-            if (str_ends_with($file, '.php')) {
-                $files[] = (string) $file;
+        foreach ([app_path('Filament'), resource_path('views/filament')] as $directory) {
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+                if (str_ends_with($file, '.php')) {
+                    $files[] = (string) $file;
+                }
             }
         }
 
@@ -196,10 +196,15 @@ class AdminLocaleTest extends TestCase
             ));
 
             foreach ($tokens as $i => $token) {
-                if (is_array($token) && $token[0] === T_STRING && $token[1] === '__'
+                if (is_array($token) && $token[0] === T_STRING && in_array($token[1], ['__', 'trans_choice'], true)
                     && ($tokens[$i + 1] ?? null) === '('
                     && is_array($tokens[$i + 2] ?? null) && $tokens[$i + 2][0] === T_CONSTANT_ENCAPSED_STRING) {
-                    $keys[] = stripcslashes(substr($tokens[$i + 2][1], 1, -1));
+                    $key = stripcslashes(substr($tokens[$i + 2][1], 1, -1));
+
+                    // « paquet::clé » : traduit par le paquet (Filament), pas par ce fichier.
+                    if (! str_contains($key, '::')) {
+                        $keys[] = $key;
+                    }
                 }
             }
         }

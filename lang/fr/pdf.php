@@ -33,6 +33,14 @@ return [
         'Offre valable 30 jours à compter de la date d\'émission, sous réserve de disponibilité en stock.',
         'Délai indicatif de réalisation : 2 à 5 semaines selon la nature du chantier.',
     ],
+    // Encadré de bas de page : le bon geste d'entretien évite les litiges.
+    'care_title' => 'Entretien de votre pierre naturelle',
+    'care_tips' => [
+        'Nettoyez à l\'eau tiède et au savon neutre (pH neutre), puis séchez avec un chiffon doux.',
+        'Proscrivez produits acides, anticalcaires, javel, vinaigre et citron : ils ternissent et rongent la pierre de façon irréversible.',
+        'Essuyez sans attendre café, huile, vin ou jus, et renouvelez le traitement hydrofuge tous les 12 à 18 mois.',
+    ],
+    'care_note' => 'Les altérations dues à un produit ou à un entretien inadapté ne relèvent pas de notre responsabilité.',
     'next_step' => 'Passons à l\'étape suivante',
     'next_step_detail' => 'Nous convenons d\'un métré gratuit, chez vous, sous 48 heures.',
     'currency' => 'DH',
